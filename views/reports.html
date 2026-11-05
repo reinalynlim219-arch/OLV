@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+
+    <title>
+        Reports
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/pages.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="container">
+
+        <!-- ==========================================
+             PAGE HEADER
+        =========================================== -->
+
+        <div class="page-header">
+
+            
+
+            <h1>
+                Reports
+            </h1>
+
+            <p>
+                Generate and view reports for
+                inventory, sales, customers,
+                deliveries, and transactions.
+            </p>
+
+
+        </div>
+
+        <!-- ==========================================
+             REPORT OPTIONS
+        =========================================== -->
+
+        <div class="dashboard-grid report-grid">
+
+            <!-- ======================================
+                 INVENTORY REPORT
+            ======================================= -->
+
+            <div class="card">
+
+                <span class="report-kicker">Stock</span>
+                <h3>
+                    Inventory Report
+                </h3>
+
+                <p>
+                    View current inventory levels,
+                    minimum stock, and low-stock
+                    products.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="inventoryReportButton"
+                >
+                    View Inventory Report
+                </button>
+
+            </div>
+
+            <!-- ======================================
+                 SALES REPORT
+            ======================================= -->
+
+            <div class="card">
+
+                <span class="report-kicker">Sales</span>
+                <h3>
+                    Sales Report
+                </h3>
+
+                <p>
+                    View completed orders and
+                    total sales.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="salesReportButton"
+                >
+                    View Sales Report
+                </button>
+
+            </div>
+
+            <!-- ======================================
+                 DELIVERY REPORT
+            ======================================= -->
+
+            <div class="card">
+
+                <span class="report-kicker">Operations</span>
+                <h3>
+                    Delivery Report
+                </h3>
+
+                <p>
+                    View delivery schedules,
+                    addresses, and delivery status.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="deliveryReportButton"
+                >
+                    View Delivery Report
+                </button>
+
+            </div>
+
+            <!-- ======================================
+                 CUSTOMER REPORT
+            ======================================= -->
+
+            <div class="card">
+
+                <span class="report-kicker">Customers</span>
+                <h3>
+                    Customer Report
+                </h3>
+
+                <p>
+                    View customer information and
+                    customer status.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="customerReportButton"
+                >
+                    View Customer Report
+                </button>
+
+            </div>
+
+            <!-- ======================================
+                 TRANSACTION REPORT
+            ======================================= -->
+
+            <div class="card">
+
+                <span class="report-kicker">Records</span>
+                <h3>
+                    Transaction / Receipt Report
+                </h3>
+
+                <p>
+                    View completed transactions
+                    and order details.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="transactionReportButton"
+                >
+                    View Transaction Report
+                </button>
+
+            </div>
+
+            <!-- Cash collected by drivers on delivery and handed over to the station. -->
+            <div class="card">
+                <span class="report-kicker">Cash</span>
+                <h3>Cash Remittance Report</h3>
+                <p>See the cash each driver collected on delivery, and whether it was handed over to the station.</p>
+                <button type="button" class="btn btn-primary" id="remittanceReportButton">View Remittance Report</button>
+            </div>
+
+            <!-- Station gallons lent / returned / still out, and new gallons sold. -->
+            <div class="card">
+                <span class="report-kicker">Gallons</span>
+                <h3>Station Gallon Report</h3>
+                <p>See which customers still hold the station's gallons, and how many new gallons were sold.</p>
+                <button type="button" class="btn btn-primary" id="gallonReportButton">View Gallon Report</button>
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             REPORT DISPLAY AREA
+        =========================================== -->
+
+        <!-- The selected report opens in this pop-up window. -->
+        <dialog
+            class="card report-display-card"
+            id="reportDisplayCard"
+            aria-labelledby="reportTitle"
+        >
+
+            <div class="report-header">
+
+                <h2 id="reportTitle">
+                    Report
+                </h2>
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="printReportButton"
+                    >
+                        Print Report
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="exportReportButton">Download Excel</button>
+                    <button type="button" class="btn btn-outline-primary" id="emailReportButton">Email Station Summary</button>
+                    <button type="button" class="btn btn-secondary" id="closeReportButton">Close</button>
+
+                </div>
+
+            </div>
+
+            <!-- One drop-down, applied right away (no From/To boxes or Apply button).
+                 Hidden for reports that are not about dates, like Inventory. -->
+            <div class="report-period-picker" id="reportPeriodPicker" hidden>
+                <label for="reportPeriodSelect" class="form-label mb-0 me-2">Period</label>
+                <select id="reportPeriodSelect" class="form-select form-select-sm w-auto">
+                    <option value="all">All dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">This week</option>
+                    <option value="month">This month</option>
+                    <option value="last-month">Last month</option>
+                    <option value="year">This year</option>
+                </select>
+            </div>
+
+            <!-- Everything inside #reportDocument is what gets printed. -->
+            <div id="reportDocument" class="report-document">
+                <div class="report-letterhead">
+                    <strong>OLV Water Refilling Station</strong>
+                    <span>1095 St. Agatha Road, 7th Street, Our Lady's Village (OLV), Bitano, Legazpi City</span>
+                    <h3 id="reportDocumentTitle"></h3>
+                    <p id="reportDescription" class="report-description"></p>
+                    <dl class="report-meta">
+                        <div><dt>Coverage</dt><dd id="reportPeriod">All dates</dd></div>
+                        <div><dt>Generated</dt><dd id="reportGenerated"></dd></div>
+                        <div><dt>Prepared by</dt><dd id="reportPreparedBy"></dd></div>
+                    </dl>
+                </div>
+
+                <div
+                    id="reportSummary"
+                    class="report-summary"
+                ></div>
+
+                <div
+                    id="reportResult"
+                    class="report-result"
+                ></div>
+
+                <div class="report-signatures">
+                    <div><span id="reportSignatureName"></span>Prepared by</div>
+                    <div><span>&nbsp;</span>Noted by (Owner)</div>
+                </div>
+            </div>
+
+        </dialog>
+
+    </main>
+
+    <!-- ==========================================
+         REPORTS JAVASCRIPT
+    =========================================== -->
+
+    <script src="/js/xlsx-report.js"></script>
+    <script src="/js/reports.js"></script>
+    
+
+</body>
+
+</html>

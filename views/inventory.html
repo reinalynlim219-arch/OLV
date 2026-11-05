@@ -1,0 +1,2491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+
+    <title>
+        Inventory - OLV Water Refilling Station
+    </title>
+
+    <link
+        href="/vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/pages.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+    <!-- ========================================== -->
+    <!-- NAVBAR -->
+    <!-- ========================================== -->
+        
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================== -->
+
+    <main class="container mt-4">
+
+        <!-- ========================================== -->
+        <!-- PAGE HEADER -->
+        <!-- ========================================== -->
+
+        <div
+            class="d-flex justify-content-between align-items-center mb-4"
+        >
+
+            <div>
+
+                <h1>
+                    Inventory
+                </h1>
+
+                <p class="text-muted mb-0">
+
+                    Manage and monitor products,
+                    stock levels, and inventory movements.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Summary cards -->
+        <div class="olv-stats">
+            <div class="olv-stat is-blue"><span class="olv-stat-label">Total products</span><span id="totalProducts" class="olv-stat-value">0</span></div>
+            <div class="olv-stat is-red"><span class="olv-stat-label">Low stock</span><span id="lowStockProducts" class="olv-stat-value">0</span></div>
+            <div class="olv-stat is-green"><span class="olv-stat-label">Active products</span><span id="activeProducts" class="olv-stat-value">0</span></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ADD / UPDATE PRODUCT FORM -->
+        <!-- ========================================== -->
+
+        <div
+            id="productForm"
+            class="card mb-4 d-none"
+        >
+
+            <div class="card-header">
+
+                <h4
+                    id="formTitle"
+                    class="mb-0"
+                >
+                    Add Product
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                <form id="inventoryForm">
+
+                    <input
+                        type="hidden"
+                        id="product_id"
+                    >
+
+                    <div class="row">
+
+                        <!-- PRODUCT NAME -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="product_name_choice"
+                                class="form-label"
+                            >
+                                Product Name
+                            </label>
+
+                            <!-- Pick a saved name, or choose "Add new" to type one. -->
+                            <select
+                                id="product_name_choice"
+                                class="form-select"
+                                required
+                            ></select>
+
+                            <input
+                                type="text"
+                                id="product_name"
+                                class="form-control mt-2 d-none"
+                                maxlength="100"
+                                placeholder="Type the new product name"
+                                aria-label="New product name"
+                            >
+
+                        </div>
+
+
+                        <!-- SUPPLIER -->
+
+                        <div class="col-md-6 mb-3">
+                            <label for="supplier_name_choice" class="form-label">Supplier</label>
+                            <!-- Pick a saved supplier, or choose "Add new" to type one. -->
+                            <select id="supplier_name_choice" class="form-select"></select>
+                            <input type="text" id="supplier_name" class="form-control mt-2 d-none" maxlength="100" placeholder="Type the new supplier name" aria-label="New supplier name">
+                        </div>
+
+
+                        <!-- UNIT -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="unit"
+                                class="form-label"
+                            >
+                                Unit
+                            </label>
+
+                            <input
+                                type="text"
+                                id="unit"
+                                class="form-control"
+                                placeholder="e.g. gallon, piece, bottle"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="col-md-4 mb-3">
+
+                            <label
+                                for="price"
+                                class="form-label"
+                            >
+                                Price / refill price (₱)
+                            </label>
+
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">₱</span>
+                                <input
+                                    type="text"
+                                    id="price"
+                                    class="form-control"
+                                    inputmode="decimal"
+                                    autocomplete="off"
+                                    maxlength="12"
+                                    placeholder="e.g. 35.00"
+                                    aria-describedby="priceHelp"
+                                    required
+                                >
+                            </div>
+                            <div id="priceHelp" class="form-text">For gallons: the price when the customer brings or returns their own gallon.</div>
+
+                        </div>
+
+                        <!-- NEW GALLON PRICE (optional) -->
+                        <div class="col-md-4 mb-3">
+                            <label for="newContainerPrice" class="form-label">New gallon price (₱, optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">₱</span>
+                                <input type="text" id="newContainerPrice" class="form-control" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="e.g. 100.00" aria-describedby="newContainerHelp">
+                            </div>
+                            <div id="newContainerHelp" class="form-text">Added when a customer needs a new gallon (e.g. ₱35 refill + ₱100 = ₱135). Leave empty if sold as a refill only.</div>
+                        </div>
+
+
+                        <!-- QUANTITY -->
+
+                        <div class="col-md-4 mb-3">
+
+                            <label
+                                for="quantity"
+                                class="form-label"
+                            >
+                                Quantity
+                            </label>
+
+                            <input
+                                type="number"
+                                id="quantity"
+                                class="form-control"
+                                min="0"
+                                value="0"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- MINIMUM STOCK -->
+
+                        <div class="col-md-4 mb-3">
+
+                            <label
+                                for="minimum_stock"
+                                class="form-label"
+                            >
+                                Minimum Stock
+                            </label>
+
+                            <input
+                                type="number"
+                                id="minimum_stock"
+                                class="form-control"
+                                min="0"
+                                value="0"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Save Product
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="hideForm()"
+                    >
+                        Cancel
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- STOCK MOVEMENT FORM -->
+        <!-- ========================================== -->
+
+        <div
+            id="stockForm"
+            class="card mb-4 d-none"
+        >
+
+            <div class="card-header">
+
+                <h4
+                    id="stockFormTitle"
+                    class="mb-0"
+                >
+                    Stock In
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                <p
+                    id="stockProductName"
+                    class="fw-bold"
+                >
+                    Product
+                </p>
+
+                <form id="stockMovementForm">
+
+                    <input
+                        type="hidden"
+                        id="stock_product_id"
+                    >
+
+                    <input
+                        type="hidden"
+                        id="stock_movement_type"
+                    >
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="stock_quantity"
+                            class="form-label"
+                        >
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="stock_quantity"
+                            class="form-control"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- REASON -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="stock_reason"
+                            class="form-label"
+                        >
+                            Reason
+                        </label>
+
+                        <input
+                            type="text"
+                            id="stock_reason"
+                            class="form-control"
+                            placeholder="e.g. New water delivery"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Save Stock Movement
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="hideStockForm()"
+                    >
+                        Cancel
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PRODUCTS TABLE (filters live in the panel header) -->
+        <!-- ========================================== -->
+
+        <div class="olv-panel">
+
+            <div class="olv-panel-head">
+                <div>
+                    <h2 class="olv-panel-title">Products</h2>
+                    <p class="olv-panel-sub">Stock levels, prices, and status for every product.</p>
+                </div>
+                <div class="olv-panel-tools">
+                    <select id="statusFilter" class="form-select" onchange="loadInventory()" aria-label="Product status">
+                        <option value="all">All products</option>
+                        <option value="active">Active</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                    <input type="search" id="searchInput" class="form-control" placeholder="Search product or supplier" oninput="displayInventory()" aria-label="Search products">
+                    <button type="button" class="btn btn-primary text-nowrap" onclick="showAddForm()">+ Add Product</button>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+
+                    <!-- data-collapse: as cards (laptops, phones) each product shows only its
+                         name; tapping it drops down the details (table-cards.js). -->
+                    <table
+                        class="table table-hover align-middle mb-0"
+                        data-collapse
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Supplier
+                                </th>
+
+                                <th>
+                                    Unit
+                                </th>
+
+                                <th>
+                                    Price (₱)
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Minimum Stock
+                                </th>
+
+                                <th>
+                                    Stock Status
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Stock Movement
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="inventoryTable">
+
+                            <tr>
+
+                                <td
+                                    colspan="10"
+                                    class="text-center"
+                                >
+                                    Loading inventory...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- INVENTORY MOVEMENTS -->
+        <!-- ========================================== -->
+
+        <div
+            id="inventoryMovements"
+            class="olv-panel mb-5"
+        >
+
+        <div
+            class="olv-panel-head"
+        >
+
+            <div>
+                <h2 class="olv-panel-title">Inventory movement history</h2>
+                <p class="olv-panel-sub">Every Stock In and Out of Stock movement, newest first.</p>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                onclick="loadMovements()"
+            >
+                Refresh
+            </button>
+
+        </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-hover align-middle mb-0"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Movement
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Reason
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="movementTable">
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="text-center"
+                                >
+                                    Loading movement history...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div id="inventoryMovementPagination" class="movement-pagination" aria-label="Inventory movement history pages"></div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================== -->
+
+    <script>
+
+        // ==========================================
+        // GLOBAL VARIABLES
+        // ==========================================
+
+        let inventoryData = [];
+        let inventoryMovementData = [];
+        let currentInventoryMovementPage = 1;
+        const inventoryMovementPageSize = 10;
+
+
+        // ==========================================
+        // LOAD INVENTORY
+        // ==========================================
+
+        // Admin and staff may remove products (to Recently Deleted).
+        let inventoryRole = null;
+
+        async function loadInventory() {
+
+            try {
+
+                if (inventoryRole === null) {
+                    try {
+                        const me = await (await fetch("/api/current-user", { cache: "no-store" })).json();
+                        inventoryRole = (me && me.user && me.user.role) || "";
+                    } catch { inventoryRole = ""; }
+                }
+
+                const response =
+                    await fetch(
+                        "/api/inventory"
+                    );
+
+                if (response.status === 401) {
+
+                    window.location.href = "/login";
+
+                    return;
+
+                }
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to load inventory."
+                    );
+
+                }
+
+                const data =
+                    await response.json();
+
+                inventoryData =
+                    Array.isArray(data)
+                        ? data
+                        : [];
+
+                updateSummary();
+
+                displayInventory();
+
+                loadMovements();
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "inventoryTable"
+                ).innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="10"
+                            class="text-center text-danger"
+                        >
+
+                            Unable to load inventory.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // UPDATE SUMMARY
+        // ==========================================
+
+        function updateSummary() {
+
+            const total =
+                inventoryData.length;
+
+            const active =
+                inventoryData.filter(
+                    item =>
+                        item.status === "active"
+                ).length;
+
+            const lowStock =
+                inventoryData.filter(
+                    item =>
+                        item.stock_status === "low-stock"
+                ).length;
+
+            document.getElementById(
+                "totalProducts"
+            ).textContent =
+                total;
+
+            document.getElementById(
+                "activeProducts"
+            ).textContent =
+                active;
+
+            document.getElementById(
+                "lowStockProducts"
+            ).textContent =
+                lowStock;
+
+        }
+
+
+        // ==========================================
+        // DISPLAY INVENTORY
+        // ==========================================
+
+        function displayInventory() {
+
+            const table =
+                document.getElementById(
+                    "inventoryTable"
+                );
+
+            const statusFilter =
+                document.getElementById(
+                    "statusFilter"
+                ).value;
+
+            const search =
+                document.getElementById(
+                    "searchInput"
+                ).value
+                .trim()
+                .toLowerCase();
+
+            let filtered =
+                inventoryData.filter(
+                    item => {
+
+                        // STATUS FILTER
+
+                        if (
+                            statusFilter !== "all" &&
+                            item.status !== statusFilter
+                        ) {
+
+                            return false;
+
+                        }
+
+                        // SEARCH FILTER
+
+                        if (search) {
+
+                            const productName =
+                                String(
+                                    item.product_name || ""
+                                ).toLowerCase();
+
+                            const supplier =
+                                String(
+                                    item.supplier_name || ""
+                                ).toLowerCase();
+
+                            if (
+                                !productName.includes(search) &&
+                                !supplier.includes(search)
+                            ) {
+
+                                return false;
+
+                            }
+
+                        }
+
+                        return true;
+
+                    }
+                );
+
+            table.innerHTML = "";
+
+            if (filtered.length === 0) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="10"
+                            class="text-center"
+                        >
+
+                            No inventory found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            filtered.forEach(
+                item => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    const quantity =
+                        Number(
+                            item.quantity || 0
+                        );
+
+                    const minimumStock =
+                        Number(
+                            item.minimum_stock || 0
+                        );
+
+                    // ==================================
+                    // STOCK STATUS
+                    // ==================================
+
+                    let stockStatus =
+                        item.stock_status;
+
+                    if (
+                        !stockStatus
+                    ) {
+
+                        stockStatus =
+                            quantity <= minimumStock
+                                ? "low-stock"
+                                : "available";
+
+                    }
+
+                    let stockBadge;
+
+                    if (
+                        stockStatus ===
+                        "low-stock"
+                    ) {
+
+                        stockBadge = `
+
+                            <span class="badge bg-danger">
+
+                                Low Stock
+
+                            </span>
+
+                        `;
+
+                    } else {
+
+                        stockBadge = `
+
+                            <span class="badge bg-success">
+
+                                Available
+
+                            </span>
+
+                        `;
+
+                    }
+
+
+                    // ==================================
+                    // PRODUCT STATUS
+                    // ==================================
+
+                    let statusBadge;
+
+                    if (
+                        item.status ===
+                        "archived"
+                    ) {
+
+                        statusBadge = `
+
+                            <span class="badge bg-secondary">
+
+                                Archived
+
+                            </span>
+
+                        `;
+
+                    } else {
+
+                        statusBadge = `
+
+                            <span class="badge bg-primary">
+
+                                Active
+
+                            </span>
+
+                        `;
+
+                    }
+
+
+                    // ==================================
+                    // STATUS BUTTON
+                    // ==================================
+
+                    let statusButton;
+
+                    if (
+                        item.status ===
+                        "archived"
+                    ) {
+
+                        statusButton = `
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-success mb-1"
+                                onclick="changeStatus(
+                                    ${item.product_id},
+                                    'active'
+                                )"
+                            >
+
+                                Activate
+
+                            </button>
+
+                        `;
+
+                    } else {
+
+                        statusButton = `
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-secondary mb-1"
+                                onclick="changeStatus(
+                                    ${item.product_id},
+                                    'archived'
+                                )"
+                            >
+
+                                Archive
+
+                            </button>
+
+                        `;
+
+                    }
+
+
+                    // ==================================
+                    // ACTION BUTTONS
+                    // ==================================
+
+                    let stockButtons = "";
+
+                    if (
+                        item.status ===
+                        "active"
+                    ) {
+
+                        stockButtons = `
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-success mb-1"
+                                onclick="showStockForm(
+                                    ${item.product_id},
+                                    'stock_in'
+                                )"
+                            >
+
+                                Stock In
+
+                            </button>
+
+                        `;
+                        // Stock out is recorded automatically when an order
+                        // is completed, so there is no manual Stock Out button.
+
+                    }
+
+
+                    // ==================================
+                    // TABLE ROW
+                    // ==================================
+
+                    row.innerHTML = `
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(
+                                    item.product_name || ""
+                                )}
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            ${escapeHTML(
+                                item.supplier_name || "-"
+                            )}
+
+                        </td>
+
+                        <td>
+
+                            ${escapeHTML(
+                                item.unit || ""
+                            )}
+
+                        </td>
+
+                        <td>
+
+                            ₱${Number(
+                                item.price || 0
+                            ).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            ${Number(item.new_container_price) > 0
+                                ? `<div class="small text-muted">New gallon + water: ₱${(Number(item.price || 0) + Number(item.new_container_price)).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>`
+                                : ""}
+
+                        </td>
+
+                        <td>
+
+                            ${quantity}
+
+                        </td>
+
+                        <td>
+
+                            ${minimumStock}
+
+                        </td>
+
+                        <td>
+
+                            ${stockBadge}
+
+                        </td>
+
+                        <td>
+
+                            ${statusBadge}
+
+                        </td>
+
+                        <td>
+                            ${stockButtons}
+                        </td>
+
+                        <td>
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Edit product"
+                            aria-label="Edit product"
+                            onclick="editProduct(${item.product_id})"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        ${["admin", "staff"].includes(inventoryRole) ? `<button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            title="More actions"
+                            aria-label="More actions"
+                            aria-haspopup="menu"
+                            onclick="openProductMenu(event, ${item.product_id}, ${escapeHTML(JSON.stringify(item.product_name || "this product"))})"
+                        >
+                            <i class="bi bi-gear"></i>
+                        </button>` : ""}
+                        ${statusButton}
+                        </div>
+                        </td>
+
+                    `;
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+        // ==========================================
+        // SHOW ADD FORM
+        // ==========================================
+
+        function showAddForm() {
+
+            const form =
+                document.getElementById(
+                    "inventoryForm"
+                );
+
+            form.reset();
+
+            document.getElementById(
+                "product_id"
+            ).value = "";
+
+            document.getElementById(
+                "formTitle"
+            ).textContent =
+                "Add Product";
+
+            document.getElementById(
+                "productForm"
+            ).classList.remove(
+                "d-none"
+            );
+
+            document.getElementById(
+                "stockForm"
+            ).classList.add(
+                "d-none"
+            );
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        // ==========================================
+        // HIDE PRODUCT FORM
+        // ==========================================
+
+        function hideForm() {
+
+            document.getElementById(
+                "productForm"
+            ).classList.add(
+                "d-none"
+            );
+
+        }
+
+
+        // ==========================================
+        // EDIT PRODUCT
+        // ==========================================
+
+        function editProduct(productId) {
+
+            const product =
+                inventoryData.find(
+                    item =>
+                        Number(
+                            item.product_id
+                        ) === Number(
+                            productId
+                        )
+                );
+
+            if (!product) {
+
+                alert(
+                    "Product not found."
+                );
+
+                return;
+
+            }
+
+            document.getElementById(
+                "productForm"
+            ).classList.remove(
+                "d-none"
+            );
+
+            document.getElementById(
+                "formTitle"
+            ).textContent =
+                "Update Product";
+
+            document.getElementById(
+                "product_id"
+            ).value =
+                product.product_id;
+
+            document.getElementById(
+                "product_name"
+            ).value =
+                product.product_name || "";
+
+            document.getElementById("supplier_name").value = product.supplier_name || "";
+
+            document.getElementById(
+                "unit"
+            ).value =
+                product.unit || "";
+
+            document.getElementById(
+                "price"
+            ).value =
+                Number(
+                    product.price || 0
+                ).toFixed(2);
+
+            document.getElementById("newContainerPrice").value =
+                Number(product.new_container_price) > 0 ? Number(product.new_container_price).toFixed(2) : "";
+
+            document.getElementById(
+                "quantity"
+            ).value =
+                Number(
+                    product.quantity || 0
+                );
+
+            document.getElementById(
+                "minimum_stock"
+            ).value =
+                Number(
+                    product.minimum_stock || 0
+                );
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        // ==========================================
+        // ADD / UPDATE PRODUCT
+        // ==========================================
+
+        document
+            .getElementById(
+                "inventoryForm"
+            )
+            .addEventListener(
+                "submit",
+                async function(event) {
+
+                    event.preventDefault();
+
+                    const productId =
+                        document.getElementById(
+                            "product_id"
+                        ).value;
+
+                    const productName =
+                        document.getElementById(
+                            "product_name"
+                        ).value.trim();
+
+                    const supplierName = document.getElementById("supplier_name").value.trim();
+
+                    const unit =
+                        document.getElementById(
+                            "unit"
+                        ).value.trim();
+
+                    // Price is typed as text: digits with up to 2 decimals (commas allowed, e.g. 1,250.50).
+                    const priceText =
+                        document.getElementById(
+                            "price"
+                        ).value.replace(/,/g, "").trim();
+
+                    if (!/^\d+(\.\d{1,2})?$/.test(priceText) || Number(priceText) <= 0) {
+
+                        alert(
+                            "Enter a valid price, for example 30 or 30.50."
+                        );
+
+                        document.getElementById("price").focus();
+
+                        return;
+
+                    }
+
+                    const price =
+                        Number(priceText);
+
+                    // Optional: price of a new gallon, added to the refill price.
+                    const containerText = document.getElementById("newContainerPrice").value.replace(/,/g, "").trim();
+                    if (containerText && !/^\d+(\.\d{1,2})?$/.test(containerText)) {
+                        alert("Enter the new gallon price as an amount, for example 100, or leave it empty.");
+                        document.getElementById("newContainerPrice").focus();
+                        return;
+                    }
+                    const newContainerPrice = containerText ? Number(containerText) : 0;
+
+                    const quantity =
+                        Number(
+                            document.getElementById(
+                                "quantity"
+                            ).value
+                        );
+
+                    const minimumStock =
+                        Number(
+                            document.getElementById(
+                                "minimum_stock"
+                            ).value
+                        );
+
+                    if (
+                        !productName ||
+                        !unit
+                    ) {
+
+                        alert(
+                            "Product name and unit are required."
+                        );
+
+                        return;
+
+                    }
+
+                    if (
+                        price < 0 ||
+                        quantity < 0 ||
+                        minimumStock < 0
+                    ) {
+
+                        alert(
+                            "Price, quantity, and minimum stock cannot be negative."
+                        );
+
+                        return;
+
+                    }
+
+                    const productData = {
+
+                        product_name:
+                            productName,
+
+                        supplier_name:
+                            supplierName,
+
+                        unit:
+                            unit,
+
+                        price:
+                            price,
+
+                        new_container_price:
+                            newContainerPrice,
+
+                        quantity:
+                            quantity,
+
+                        minimum_stock:
+                            minimumStock
+
+                    };
+
+                    let url =
+                        "/api/inventory/add";
+
+                    let method =
+                        "POST";
+
+                    if (productId) {
+
+                        url =
+                            "/api/inventory/update";
+
+                        method =
+                            "PUT";
+
+                        productData.product_id =
+                            Number(
+                                productId
+                            );
+
+                    }
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                url,
+                                {
+
+                                    method:
+                                        method,
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json"
+
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            productData
+                                        )
+
+                                }
+                            );
+
+                        if (
+                            response.status ===
+                            401
+                        ) {
+
+                            window.location.href =
+                                "/login";
+
+                            return;
+
+                        }
+
+                        const result =
+                            await response.json();
+
+                        alert(
+                            result.message ||
+                            "Operation completed."
+                        );
+
+                        if (
+                            response.ok
+                        ) {
+
+                            hideForm();
+
+                            loadInventory();
+
+                        }
+
+                    }
+
+                    catch (error) {
+
+                        console.error(error);
+
+                        alert(
+                            "Unable to save product."
+                        );
+
+                    }
+
+                }
+            );
+
+
+        // ==========================================
+        // SHOW STOCK FORM
+        // ==========================================
+
+        function showStockForm(
+            productId,
+            movementType
+        ) {
+
+            const product =
+                inventoryData.find(
+                    item =>
+                        Number(
+                            item.product_id
+                        ) === Number(
+                            productId
+                        )
+                );
+
+            if (!product) {
+
+                alert(
+                    "Product not found."
+                );
+
+                return;
+
+            }
+
+            if (
+                product.status !==
+                "active"
+            ) {
+
+                alert(
+                    "Archived products cannot receive stock movements."
+                );
+
+                return;
+
+            }
+
+            document.getElementById(
+                "stockForm"
+            ).classList.remove(
+                "d-none"
+            );
+
+            document.getElementById(
+                "productForm"
+            ).classList.add(
+                "d-none"
+            );
+
+            document.getElementById(
+                "stock_product_id"
+            ).value =
+                productId;
+
+            document.getElementById(
+                "stock_movement_type"
+            ).value =
+                movementType;
+
+            document.getElementById(
+                "stock_quantity"
+            ).value =
+                "";
+
+            document.getElementById(
+                "stock_reason"
+            ).value =
+                "";
+
+            document.getElementById(
+                "stockProductName"
+            ).textContent =
+                product.product_name +
+                " - Current Stock: " +
+                (product.quantity ?? 0);
+
+            if (
+                movementType ===
+                "stock_in"
+            ) {
+
+                document.getElementById(
+                    "stockFormTitle"
+                ).textContent =
+                    "Stock In";
+
+                document.getElementById(
+                    "stock_reason"
+                ).placeholder =
+                    "e.g. New water delivery";
+
+            } else {
+
+                document.getElementById(
+                    "stockFormTitle"
+                ).textContent =
+                    "Out of Stock";
+
+                document.getElementById(
+                    "stock_reason"
+                ).placeholder =
+                    "e.g. Customer order";
+
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        // ==========================================
+        // HIDE STOCK FORM
+        // ==========================================
+
+        function hideStockForm() {
+
+            document.getElementById(
+                "stockForm"
+            ).classList.add(
+                "d-none"
+            );
+
+        }
+
+
+        // ==========================================
+        // STOCK IN / STOCK OUT
+        // ==========================================
+
+        document
+            .getElementById(
+                "stockMovementForm"
+            )
+            .addEventListener(
+                "submit",
+                async function(event) {
+
+                    event.preventDefault();
+
+                    const productId =
+                        Number(
+                            document.getElementById(
+                                "stock_product_id"
+                            ).value
+                        );
+
+                    const movementType =
+                        document.getElementById(
+                            "stock_movement_type"
+                        ).value;
+
+                    const quantity =
+                        Number(
+                            document.getElementById(
+                                "stock_quantity"
+                            ).value
+                        );
+
+                    const reason =
+                        document.getElementById(
+                            "stock_reason"
+                        ).value.trim();
+
+                    if (
+                        !productId ||
+                        quantity <= 0
+                    ) {
+
+                        alert(
+                            "Quantity must be greater than zero."
+                        );
+
+                        return;
+
+                    }
+
+                    const product =
+                        inventoryData.find(
+                            item =>
+                                Number(
+                                    item.product_id
+                                ) === productId
+                        );
+
+                    if (!product) {
+
+                        alert(
+                            "Product not found."
+                        );
+
+                        return;
+
+                    }
+
+                    // ==================================
+                    // EXTRA STOCK OUT CHECK
+                    // ==================================
+
+                    if (
+                        movementType ===
+                        "stock_out" &&
+                        quantity >
+                        Number(
+                            product.quantity || 0
+                        )
+                    ) {
+
+                        alert(
+                            "Stock Out quantity cannot be greater than available stock."
+                        );
+
+                        return;
+
+                    }
+
+                    let url;
+
+                    if (
+                        movementType ===
+                        "stock_in"
+                    ) {
+
+                        url =
+                            "/api/inventory/stock-in";
+
+                    } else {
+
+                        url =
+                            "/api/inventory/stock-out";
+
+                    }
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                url,
+                                {
+
+                                    method:
+                                        "PUT",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json"
+
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+
+                                            product_id:
+                                                productId,
+
+                                            quantity:
+                                                quantity,
+
+                                            reason:
+                                                reason ||
+                                                (
+                                                    movementType ===
+                                                    "stock_in"
+                                                        ? "Stock In"
+                                                        : "Out of Stock"
+                                                )
+
+                                        })
+
+                                }
+                            );
+
+                        if (
+                            response.status ===
+                            401
+                        ) {
+
+                            window.location.href =
+                                "/login";
+
+                            return;
+
+                        }
+
+                        const result =
+                            await response.json();
+
+                        alert(
+                            result.message ||
+                            "Stock movement completed."
+                        );
+
+                        if (
+                            response.ok
+                        ) {
+
+                            hideStockForm();
+
+                            loadInventory();
+
+                        }
+
+                    }
+
+                    catch (error) {
+
+                        console.error(error);
+
+                        alert(
+                            "Unable to process stock movement."
+                        );
+
+                    }
+
+                }
+            );
+
+
+        // ==========================================
+        // CHANGE STATUS
+        // ==========================================
+
+        // ==========================================
+        // REMOVE (gear menu on each product)
+        // The product moves to Recently Deleted (side menu), where admin
+        // or staff can restore it or delete it permanently.
+        // ==========================================
+
+        async function removeProduct(productId, productName) {
+            if (!(await olvConfirm(`Remove "${productName}"?\n\nIt moves to Recently Deleted in the side menu, where it can be restored or deleted permanently.`, { ok: "Remove", danger: true }))) return;
+            try {
+                const response = await fetch("/api/inventory/remove", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ product_id: Number(productId) })
+                });
+                if (response.status === 401) { window.location.href = "/login"; return; }
+                const result = await response.json();
+                alert(result.message || (response.ok ? "Product removed." : "Unable to remove the product."));
+                if (response.ok) await loadInventory();
+            } catch {
+                alert("Unable to remove the product. Check your connection and try again.");
+            }
+        }
+
+        // One menu, placed by the clicked gear.
+        const productMenu = document.createElement("div");
+        productMenu.className = "product-menu";
+        productMenu.setAttribute("role", "menu");
+        productMenu.hidden = true;
+        document.body.appendChild(productMenu);
+
+        function closeProductMenu() {
+            if (productMenu.hidden) return;
+            productMenu.hidden = true;
+            if (productMenu.opener) productMenu.opener.setAttribute("aria-expanded", "false");
+        }
+
+        function openProductMenu(event, productId, productName) {
+            event.stopPropagation();
+            const gear = event.currentTarget;
+            if (!productMenu.hidden && productMenu.opener === gear) return closeProductMenu();
+            productMenu.opener = gear;
+            productMenu.innerHTML = `<button type="button" role="menuitem" class="product-menu-item is-danger" data-action="remove"><i class="bi bi-trash3" aria-hidden="true"></i> Remove</button>`;
+            productMenu.querySelector('[data-action="remove"]').onclick = () => { closeProductMenu(); removeProduct(productId, productName); };
+            productMenu.hidden = false;
+            gear.setAttribute("aria-expanded", "true");
+            // Below the gear, or above it when there is no room; kept inside the window.
+            const spot = gear.getBoundingClientRect();
+            const width = productMenu.offsetWidth, height = productMenu.offsetHeight;
+            const top = spot.bottom + 6 + height > window.innerHeight ? spot.top - height - 6 : spot.bottom + 6;
+            productMenu.style.top = `${Math.max(8, top)}px`;
+            productMenu.style.left = `${Math.min(Math.max(8, spot.right - width), window.innerWidth - width - 8)}px`;
+            productMenu.querySelector("button").focus();
+        }
+
+        document.addEventListener("click", event => { if (!productMenu.contains(event.target)) closeProductMenu(); });
+        document.addEventListener("keydown", event => { if (event.key === "Escape") closeProductMenu(); });
+        window.addEventListener("scroll", closeProductMenu, true);
+        window.addEventListener("resize", closeProductMenu);
+
+        async function changeStatus(
+            productId,
+            newStatus
+        ) {
+
+            const action =
+                newStatus === "archived"
+                    ? "archive"
+                    : "activate";
+
+            const confirmed =
+                await olvConfirm(
+                    "Are you sure you want to " +
+                    action +
+                    " this product?",
+                    { ok: action === "archive" ? "Archive" : "Activate" }
+                );
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/inventory/status",
+                        {
+
+                            method:
+                                "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    product_id:
+                                        Number(
+                                            productId
+                                        ),
+
+                                    status:
+                                        newStatus
+
+                                })
+
+                        }
+                    );
+
+                if (
+                    response.status ===
+                    401
+                ) {
+
+                    window.location.href =
+                        "/login";
+
+                    return;
+
+                }
+
+                const result =
+                    await response.json();
+
+                alert(
+                    result.message ||
+                    "Status updated."
+                );
+
+                if (
+                    response.ok
+                ) {
+
+                    loadInventory();
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to change product status."
+                );
+
+            }
+
+        }
+
+
+        // ==========================================
+        // DELETE PRODUCT
+        // ADMIN ONLY
+        // ==========================================
+
+        async function deleteProduct(
+            productId
+        ) {
+
+            const confirmed =
+                await olvConfirm(
+                    "This will permanently delete the product and its inventory movement history.\n\nContinue?",
+                    { ok: "Delete permanently", danger: true }
+                );
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/inventory/delete",
+                        {
+
+                            method:
+                                "DELETE",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    product_id:
+                                        Number(
+                                            productId
+                                        )
+
+                                })
+
+                        }
+                    );
+
+                if (
+                    response.status ===
+                    401
+                ) {
+
+                    window.location.href =
+                        "/login";
+
+                    return;
+
+                }
+
+                if (
+                    response.status ===
+                    403
+                ) {
+
+                    alert(
+                        "Admin access is required to delete products."
+                    );
+
+                    return;
+
+                }
+
+                const result =
+                    await response.json();
+
+                alert(
+                    result.message ||
+                    "Delete completed."
+                );
+
+                if (
+                    response.ok
+                ) {
+
+                    loadInventory();
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to delete product."
+                );
+
+            }
+
+        }
+
+
+        // ==========================================
+        // LOAD INVENTORY MOVEMENTS
+        // ==========================================
+
+        async function loadMovements() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/inventory/movements"
+                    );
+
+                if (
+                    response.status ===
+                    401
+                ) {
+
+                    window.location.href =
+                        "/login";
+
+                    return;
+
+                }
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        "Unable to load movements."
+                    );
+
+                }
+
+                const movements =
+                    await response.json();
+
+                inventoryMovementData = Array.isArray(movements) ? movements : [];
+                // The list reloads every 5 seconds; stay on the page the user chose
+                // (renderInventoryMovements keeps it within the number of pages).
+
+                const table =
+                    document.getElementById(
+                        "movementTable"
+                    );
+
+                table.innerHTML = "";
+
+                if (inventoryMovementData.length === 0) {
+
+                    table.innerHTML = `
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center"
+                            >
+
+                                No inventory movements found.
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                    renderInventoryMovementPagination(0);
+
+                    return;
+
+                }
+
+                renderInventoryMovements();
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "movementTable"
+                ).innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center text-danger"
+                        >
+
+                            Unable to load movement history.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+        function renderInventoryMovements() {
+            const table = document.getElementById("movementTable");
+            const totalPages = Math.ceil(inventoryMovementData.length / inventoryMovementPageSize);
+            currentInventoryMovementPage = Math.max(1, Math.min(currentInventoryMovementPage, totalPages));
+            const startIndex = (currentInventoryMovementPage - 1) * inventoryMovementPageSize;
+            const pageMovements = inventoryMovementData.slice(startIndex, startIndex + inventoryMovementPageSize);
+
+            table.innerHTML = "";
+
+            pageMovements.forEach((movement) => {
+                const row = document.createElement("tr");
+                const movementBadge = movement.movement_type === "stock_in"
+                    ? '<span class="badge bg-success">Stock In</span>'
+                    : '<span class="badge bg-danger">Out of Stock</span>';
+
+                row.innerHTML = `
+                    <td>${formatDate(movement.created_at)}</td>
+                    <td>${escapeHTML(movement.product_name || "Unknown Product")}</td>
+                    <td>${movementBadge}</td>
+                    <td>${Number(movement.quantity || 0)}</td>
+                    <td>${escapeHTML(movement.reason || "-")}</td>
+                `;
+                table.appendChild(row);
+            });
+
+            renderInventoryMovementPagination(inventoryMovementData.length);
+        }
+
+        function renderInventoryMovementPagination(totalItems) {
+            const pagination = document.getElementById("inventoryMovementPagination");
+            if (!pagination) return;
+
+            const totalPages = Math.ceil(totalItems / inventoryMovementPageSize);
+            if (totalPages <= 1) {
+                pagination.innerHTML = "";
+                return;
+            }
+
+            let controls = `<button type="button" class="movement-page-button" ${currentInventoryMovementPage === 1 ? "disabled" : ""} onclick="changeInventoryMovementPage(${currentInventoryMovementPage - 1})" aria-label="Previous page">&lsaquo;</button>`;
+            for (let page = 1; page <= totalPages; page += 1) {
+                controls += `<button type="button" class="movement-page-button ${page === currentInventoryMovementPage ? "active" : ""}" onclick="changeInventoryMovementPage(${page})" aria-label="Page ${page}" ${page === currentInventoryMovementPage ? "aria-current=\"page\"" : ""}>${page}</button>`;
+            }
+            controls += `<button type="button" class="movement-page-button" ${currentInventoryMovementPage === totalPages ? "disabled" : ""} onclick="changeInventoryMovementPage(${currentInventoryMovementPage + 1})" aria-label="Next page">&rsaquo;</button>`;
+            pagination.innerHTML = controls;
+        }
+
+        function changeInventoryMovementPage(page) {
+            const totalPages = Math.max(1, Math.ceil(inventoryMovementData.length / inventoryMovementPageSize));
+            currentInventoryMovementPage = Math.max(1, Math.min(page, totalPages));
+            renderInventoryMovements();
+        }
+
+
+        // ==========================================
+        // FORMAT DATE
+        // ==========================================
+
+        function formatDate(
+            dateValue
+        ) {
+
+            if (!dateValue) {
+
+                return "-";
+
+            }
+
+            // The database stores times in UTC; show them in Philippine time.
+            const date =
+                new Date(
+                    /[zZ]|[+-]\d\d:?\d\d$/.test(dateValue)
+                        ? dateValue
+                        : String(dateValue).replace(" ", "T") + "Z"
+                );
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return dateValue;
+
+            }
+
+            return date.toLocaleString("en-PH", {
+                timeZone: "Asia/Manila",
+                dateStyle: "medium",
+                timeStyle: "short"
+            });
+
+        }
+
+
+        // ==========================================
+        // ESCAPE HTML
+        // ==========================================
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        // ==========================================
+        // LOGOUT
+        // ==========================================
+
+        async function logout() {
+
+            try {
+
+                await fetch(
+                    "/logout",
+                    {
+                        method:
+                            "POST"
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+            }
+
+            window.location.href =
+                "/login";
+
+        }
+
+        // ==========================================
+        // PRICE TEXT FIELD
+        // Only digits, one decimal point, and up to 2 decimals can be typed.
+        // Leaving the field shows the amount with 2 decimals (30 → 30.00).
+        // ==========================================
+
+        ["price", "newContainerPrice"].forEach(id => {
+            const priceInput = document.getElementById(id);
+            if (!priceInput) return;
+            priceInput.addEventListener("input", () => {
+                let text = priceInput.value.replace(/[^\d.]/g, "");
+                const dot = text.indexOf(".");
+                if (dot !== -1) text = text.slice(0, dot + 1) + text.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+                if (text !== priceInput.value) priceInput.value = text;
+            });
+            priceInput.addEventListener("blur", () => {
+                const text = priceInput.value.replace(/,/g, "").trim();
+                if (/^\d*\.?\d{0,2}$/.test(text) && text !== "" && text !== ".") priceInput.value = Number(text).toFixed(2);
+            });
+        });
+
+        // ==========================================
+        // START PAGE
+        // ==========================================
+
+        loadInventory();
+        setInterval(loadInventory, 5000);
+
+    </script>
+
+    <script>
+        // ==========================================
+        // PRODUCT NAME / SUPPLIER DROPDOWNS
+        // Each dropdown lists saved names plus "Add new ...". The hidden
+        // text boxes (#product_name, #supplier_name) still hold the value
+        // that is saved, so the existing save code is unchanged.
+        // ==========================================
+        const NEW_CHOICE = "__new__";
+        const nameChoices = [
+            { select: "product_name_choice", input: "product_name", field: "product_name", placeholder: "Select a product name", addLabel: "+ Add new product name…", optional: false },
+            { select: "supplier_name_choice", input: "supplier_name", field: "supplier_name", placeholder: "No supplier", addLabel: "+ Add new supplier name…", optional: true }
+        ];
+
+        function showTypedName(choice, show) {
+            const input = document.getElementById(choice.input);
+            input.classList.toggle("d-none", !show);
+            input.required = show && !choice.optional;
+        }
+
+        function prepareNameChoices() {
+            nameChoices.forEach(choice => {
+                const select = document.getElementById(choice.select);
+                const input = document.getElementById(choice.input);
+                const current = input.value.trim();
+                const saved = [...new Set(inventoryData.map(item => String(item[choice.field] || "").trim()).filter(Boolean))]
+                    .sort((a, b) => a.localeCompare(b));
+                select.replaceChildren(
+                    new Option(choice.placeholder, ""),
+                    ...saved.map(name => new Option(name, name)),
+                    new Option(choice.addLabel, NEW_CHOICE)
+                );
+                select.options[0].disabled = !choice.optional;
+                if (current && saved.includes(current)) {
+                    select.value = current;
+                    showTypedName(choice, false);
+                } else if (current) {
+                    select.value = NEW_CHOICE;
+                    showTypedName(choice, true);
+                } else {
+                    select.value = "";
+                    showTypedName(choice, false);
+                }
+            });
+        }
+
+        nameChoices.forEach(choice => {
+            document.getElementById(choice.select).addEventListener("change", event => {
+                const input = document.getElementById(choice.input);
+                const addingNew = event.target.value === NEW_CHOICE;
+                input.value = addingNew ? "" : event.target.value;
+                showTypedName(choice, addingNew);
+                if (addingNew) input.focus();
+            });
+        });
+
+        // Two products with the same name would be confusing: send the user
+        // to Edit or Stock In instead of creating a duplicate.
+        document.getElementById("inventoryForm").addEventListener("submit", event => {
+            const productId = Number(document.getElementById("product_id").value) || 0;
+            const name = document.getElementById("product_name").value.trim().toLowerCase();
+            const duplicate = name && inventoryData.find(item =>
+                String(item.product_name || "").trim().toLowerCase() === name && Number(item.product_id) !== productId);
+            if (duplicate) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                alert(`"${duplicate.product_name}" already exists. Use Edit or Stock In on that product instead of adding it again.`);
+            }
+        }, true);
+
+        // Show the product form and the stock form as pop-up windows.
+        // The page still shows/hides them with the "d-none" class; this keeps
+        // each pop-up open exactly while its form is shown.
+        [["productForm", hideForm], ["stockForm", hideStockForm]].forEach(([id, hide]) => {
+            const card = document.getElementById(id);
+            const popup = document.createElement("dialog");
+            popup.className = "inventory-popup";
+            popup.setAttribute("aria-labelledby", id === "productForm" ? "formTitle" : "stockFormTitle");
+            document.body.appendChild(popup);
+            popup.appendChild(card);
+            card.classList.remove("mb-4");
+
+            const sync = () => {
+                const shown = !card.classList.contains("d-none");
+                if (shown && !popup.open) {
+                    popup.showModal();
+                    popup.querySelector("input:not([type=hidden]), select, textarea")?.focus();
+                } else if (!shown && popup.open) {
+                    popup.close();
+                }
+            };
+            new MutationObserver(() => {
+                if (id === "productForm" && !card.classList.contains("d-none") && !popup.open) prepareNameChoices();
+                sync();
+            }).observe(card, { attributes: true, attributeFilter: ["class"] });
+            // Esc key or clicking the dark area outside also cancels the form.
+            popup.addEventListener("close", () => { if (!card.classList.contains("d-none")) hide(); });
+            popup.addEventListener("click", event => { if (event.target === popup) popup.close(); });
+        });
+
+        // Quick link from the dashboard menu: /inventory?action=add opens the
+        // Add Product pop-up once the product list (for the dropdowns) has loaded.
+        if (new URLSearchParams(window.location.search).get("action") === "add") {
+            window.history.replaceState(null, "", window.location.pathname);
+            let waited = 0;
+            const openWhenReady = setInterval(() => {
+                waited += 1;
+                if (inventoryData.length || waited > 20) {
+                    clearInterval(openWhenReady);
+                    showAddForm();
+                }
+            }, 150);
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="OLV Water Refilling Station: purified drinking water delivered free to your door in Legazpi City and Daraga. Order online and track your delivery.">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<title>OLV Water Refilling Station · Legazpi City &amp; Daraga</title>
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+    <nav class="site-nav" aria-label="Main">
+        <a class="site-brand" href="/">
+            <img src="/images/olv-logo.png" alt="" width="44" height="44">
+            <span><strong>OLV Water</strong><small>Refilling Station</small></span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i class="bi bi-list" aria-hidden="true"></i></button>
+        <div class="site-links" id="siteLinks">
+            <a href="#products">Products</a>
+            <a href="#how">How to order</a>
+            <a href="#areas">Delivery areas</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+</header>
+
+<main id="main">
+    <!-- The OLV banner is the hero's background (home.css). -->
+    <section class="hero">
+        <div class="hero-text">
+            <span class="eyebrow"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Legazpi City &amp; Daraga</span>
+            <h1>Clean, safe drinking water, delivered to your door.</h1>
+            <p>Order purified water refills online in a minute. We bring them to your home, office or store for free, and you can follow your delivery until it arrives.</p>
+            <div class="hero-actions">
+                <a class="btn btn-solid btn-lg" href="/login?tab=register">Create an account &amp; order</a>
+                <a class="btn btn-outline btn-lg" href="/login">I have an account</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="products" aria-labelledby="productsTitle">
+        <div class="section-head">
+            <h2 id="productsTitle">Products &amp; prices</h2>
+            <p>Prices are per refill. Delivery is free.</p>
+        </div>
+        <div class="product-grid" id="productGrid" aria-live="polite">
+            <p class="muted">Loading products...</p>
+        </div>
+    </section>
+
+    <section class="section section-tint" id="how" aria-labelledby="howTitle">
+        <div class="section-head">
+            <h2 id="howTitle">How to order</h2>
+            <p>Three steps, from your phone or computer.</p>
+        </div>
+        <ol class="steps">
+            <li><span class="step-num">1</span><h3>Create your account</h3><p>Sign up with your name, mobile number and delivery address. We email you a code to confirm it.</p></li>
+            <li><span class="step-num">2</span><h3>Choose your water</h3><p>Pick the products, how many, and the day you want them delivered.</p></li>
+            <li><span class="step-num">3</span><h3>Receive and pay</h3><p>Follow your order online. Pay the driver when it arrives, then press <em>Order Received</em>.</p></li>
+        </ol>    </section>
+
+    <section class="section" id="areas" aria-labelledby="areasTitle">
+        <div class="two-col">
+            <div>
+                <h2 id="areasTitle">Where we deliver</h2>                <ul class="area-list">
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Legazpi City</li>
+                    <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Daraga</li>
+                </ul>
+            </div>
+            <div class="hours-card">
+                <h3><i class="bi bi-clock" aria-hidden="true"></i> Delivery hours</h3>
+                <p class="hours" id="deliveryHours">8:00 AM – 5:00 PM</p>
+                <p class="muted">Orders are delivered in trips through the day, closest homes first.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-dark" id="contact" aria-labelledby="contactTitle">
+        <div class="section-head">
+            <h2 id="contactTitle">Contact us</h2>
+            <p>Questions, bulk orders, or help with your account? Call or message us.</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-card"><i class="bi bi-telephone-fill" aria-hidden="true"></i><span>Call or text</span><strong>+63 919 841 7627</strong><strong>+63 968 531 0277</strong></div>
+            <a class="contact-card" href="https://www.facebook.com/profile.php?id=61588981554478" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook" aria-hidden="true"></i><span>Facebook</span><strong>OLV Water Refilling</strong></a>
+            <div class="contact-card"><i class="bi bi-shop" aria-hidden="true"></i><span>Station</span><strong>1095 St. Agatha Road, 7th Street, Our Lady's Village (OLV), Bitano, Legazpi City</strong></div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <p>© <span id="year">2026</span> OLV Water Refilling Station · Legazpi City, Albay</p>
+    <p><a href="/login">Sign in</a> · <a href="/login?tab=register">Create account</a> · Staff and drivers sign in with their station account.</p>
+</footer>
+
+<script src="/js/home.js"></script>
+</body>
+</html>

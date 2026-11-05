@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+    <title>Manage Accounts</title>
+    <link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .page-shell { max-width: 1280px; }
+        .user-hero { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; }
+        .user-hero-copy { max-width: 680px; }
+        .user-kicker { color: var(--primary-dark); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .user-hero h2 { font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.05em; }
+        .user-create-card { background: linear-gradient(135deg, #fafdff 0%, #edf7ff 100%) !important; }
+        .section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+        .section-heading h4 { color: var(--navy); font-weight: 800; margin-bottom: 4px; }
+        .section-heading p { margin: 0; color: var(--muted); font-size: .9rem; }
+        .field-label { color: var(--navy); font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+        .form-hint { color: var(--muted); font-size: .78rem; margin-top: 6px; }
+        .role-select { min-height: 46px; }
+        .create-submit { min-height: 46px; padding-inline: 22px; }
+        .user-table-card { overflow: hidden; }
+        .user-table-card .card-body { padding: 0; }
+        .user-table-toolbar { padding: 22px 24px; border-bottom: 1px solid rgba(149, 174, 201, .2); }
+        .user-table-toolbar h4 { color: var(--navy); font-weight: 800; }
+        .user-table-card table { margin: 0; }
+        .user-table-card td, .user-table-card th { padding: 16px 24px; }
+        .user-name-cell strong { color: var(--navy); display: block; }
+        .user-name-cell small { color: var(--muted); }
+        .user-action { white-space: nowrap; }
+        .edit-modal-backdrop { background: rgba(8, 35, 55, .56); }
+        .edit-user-modal { max-width: 560px; }
+        .edit-user-modal .modal-header { border-bottom: 1px solid #e5edf5; }
+        .edit-user-modal .modal-title { color: var(--navy); font-weight: 800; }
+        .edit-user-modal .modal-footer { border-top: 1px solid #e5edf5; }
+        .edit-user-meta { padding: 12px 14px; border-radius: 12px; background: #eef7ff; color: var(--primary-dark); font-size: .88rem; }
+        .edit-user-modal, .edit-user-modal * { pointer-events: auto; }
+        #editUserModal .modal-dialog { pointer-events: auto; }
+        #editUserModal { z-index: 1060 !important; }
+        @media (max-width: 768px) { .user-hero { align-items: flex-start; flex-direction: column; } .user-table-card .table-responsive { border-radius: 0; } .user-table-card td, .user-table-card th { padding: 14px 16px; } }
+        #customerAccountDialog { width: min(560px, calc(100% - 32px)); max-height: 90vh; overflow-y: auto; padding: 24px; border: 1px solid #cbd9e8; border-radius: 16px; }
+        #customerAccountDialog::backdrop { background: rgba(8, 35, 55, .56); }
+        #createUserDialog { width: min(720px, calc(100% - 32px)); max-height: 90vh; overflow-y: auto; padding: 28px; border: 1px solid #cbd9e8; border-radius: 20px; }
+        #createUserDialog::backdrop { background: rgba(8, 35, 55, .56); }
+    </style>
+<script src="/js/phone-validation.js" defer></script>
+<script src="/js/password-eye.js" defer></script>
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+    <main class="page-shell container-fluid px-4">
+        <div class="user-hero mb-4">
+            <div class="user-hero-copy">
+                <span class="user-kicker">Access administration</span>
+                <h2 class="fw-semibold mb-2">Manage Accounts</h2>
+                <p class="text-muted mb-0">Manage staff access and customer logins in one place.</p>
+            </div>
+        </div>
+
+        <div class="card user-table-card">
+            <div class="user-table-toolbar d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                <h4 class="mb-0">Staff accounts</h4>
+                <div class="d-flex align-items-center gap-2">
+                    <span id="userCountLabel" class="text-muted small"></span>
+                    <button class="btn btn-sm btn-outline-primary" id="refreshUsersButton" type="button">Refresh List</button>
+                    <button class="btn btn-sm btn-primary" id="openCreateUserButton" type="button">+ Create Account</button>
+                </div>
+            </div>
+            <div id="usersTableContainer" class="table-responsive"></div>
+            <nav id="staffPagination" class="movement-pagination p-3" aria-label="Staff account pages"></nav>
+        </div>
+
+        <dialog id="createUserDialog" aria-labelledby="createUserTitle">
+            <div class="section-heading">
+                <div>
+                    <h4 id="createUserTitle">Create Staff Account</h4>
+                    <p>Set up a secure login for an administrator, staff member, or driver.</p>
+                </div>
+                <button type="button" class="btn-close" id="closeCreateUserButton" aria-label="Close"></button>
+            </div>
+            <form id="createUserForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="fullName">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter full name" title="Full Name" required maxlength="80">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter username" title="Username" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="contactNumber">Phone / Contact Number</label>
+                        <input data-phone-number type="tel" class="form-control" id="contactNumber" inputmode="tel" maxlength="11" pattern="[0-9]{11}" placeholder="09XXXXXXXXX" title="Phone or contact number" required>
+                        <div class="form-hint">Type the 10 digits after +63. Used for account recovery if access details are forgotten.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="password">Temporary Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter password" title="Password" required>
+                        <div class="form-hint">Share this securely and change it when needed.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="email">Email (for sign-in codes)</label>
+                        <input type="email" class="form-control" id="email" maxlength="254" autocomplete="off" placeholder="name@gmail.com">
+                        <div class="form-hint">A 6-digit code is emailed here on every sign-in. Leave empty to sign in with the password only.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label field-label" for="role">Access Role</label>
+                        <select class="form-select role-select" id="role" title="User Role">
+                            <option value="staff">Staff</option>
+                            <option value="driver">Driver</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button class="btn btn-light" id="cancelCreateUserButton" type="button">Cancel</button>
+                    <button class="btn btn-primary create-submit" type="submit">Create Account</button>
+                </div>
+            </form>
+        </dialog>
+
+        <section id="customerAccounts" class="card user-table-card mt-4 mb-4" aria-labelledby="customerAccountsHeading">
+            <div class="user-table-toolbar">
+                <h4 id="customerAccountsHeading" class="mb-1">Customer accounts</h4>
+                <p class="text-muted small mb-3">Manage registered customer usernames, passwords, and portal access.</p>
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-6"><input id="accountSearch" class="form-control" type="search" placeholder="Search name, username, contact, or email" aria-label="Search customer accounts"></div>
+                    <div class="col-md-4"><select id="accountStatusFilter" class="form-select" aria-label="Filter login status"><option value="all">All login statuses</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="pending">Pending verification</option></select></div>
+                    <div class="col-md-2"><button id="refreshAccounts" class="btn btn-outline-primary w-100" type="button">Refresh list</button></div>
+                </div>
+                <p id="accountsMessage" class="small mt-2 mb-0" role="status"></p>
+            </div>
+            <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Customer</th><th>Username</th><th>Contact</th><th>Email</th><th>Email verification</th><th>Login status</th><th>Action</th></tr></thead><tbody id="accountRows"><tr><td colspan="7">Loading customer accounts...</td></tr></tbody></table></div>
+        </section>
+    </main>
+<dialog id="customerAccountDialog" aria-labelledby="customerAccountTitle">
+    <form id="customerAccountForm">
+        <h2 id="customerAccountTitle">Edit customer account</h2>
+        <p id="customerAccountMessage" role="status"></p>
+        <input type="hidden" id="accountCustomerId">
+        <fieldset class="mb-3"><legend class="h6">Customer email</legend>
+            <label for="accountEmail">Email address</label><input class="form-control" id="accountEmail" type="email" maxlength="254" autocomplete="off">
+            <p id="accountEmailStatus" role="status"></p>
+            <button class="btn btn-outline-primary" type="button" id="sendAccountEmailLink">Send confirmation link</button>
+            <small>A confirmation link is emailed to the new address. The email is saved only after the customer opens that link. Until then, the saved email stays unchanged.</small>
+        </fieldset>
+        <div class="mb-3"><label class="form-label" for="accountContact">Contact number</label><input data-phone-number class="form-control" id="accountContact" type="tel" autocomplete="off" placeholder="9XXXXXXXXX" required aria-describedby="accountContactHelp"><small id="accountContactHelp" class="form-hint">Type the 10 digits after +63.</small></div>
+        <div class="mb-3"><label class="form-label" for="accountUsername">Username</label><input class="form-control" id="accountUsername" autocomplete="off" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]{3,32}" required></div>
+        <div class="mb-3"><label class="form-label" for="accountPassword">New password</label><div class="account-password-field"><input class="form-control" id="accountPassword" type="password" autocomplete="new-password" minlength="8" aria-describedby="accountPasswordHelp"><button type="button" id="toggleAccountPassword" class="password-toggle" aria-label="Show password" aria-controls="accountPassword" aria-pressed="false" title="Show password"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path id="accountPasswordSlash" d="m3 3 18 18" style="display:none"></path></svg></button></div><small id="accountPasswordHelp">Leave blank to keep the current password. Use 8+ characters with uppercase, lowercase, a number, and a special character.</small></div>
+        <div class="mb-3"><label class="form-label" for="accountStatus">Login status</label><select class="form-select" id="accountStatus" required><option value="active">Active</option><option value="inactive">Inactive</option><option value="pending">Pending verification</option></select></div>
+        <div class="d-flex justify-content-end gap-2"><button class="btn btn-primary" id="saveCustomerAccount" type="submit">Save account</button><button class="btn btn-outline-secondary" id="cancelCustomerAccount" type="button">Cancel</button></div>
+    </form>
+</dialog>
+
+    <div class="modal fade edit-modal-backdrop" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content edit-user-modal">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="editUserModalLabel">Edit Staff Access</h5>
+                        <p class="text-muted small mb-0">Update this account's identity, role, or status.</p>
+                    </div>
+                    <button type="button" id="closeEditUserButton" class="btn-close" aria-label="Close" onclick="closeEditUserAccess()"></button>
+                </div>
+                <form id="editUserForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editUserId">
+                        <div id="editUserMeta" class="edit-user-meta mb-3"></div>
+                        <div class="mb-3">
+                            <label class="form-label field-label" for="editFullName">Full Name</label>
+                            <input type="text" class="form-control" id="editFullName" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editUsername">Username</label>
+                                <input type="text" class="form-control" id="editUsername" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]{3,32}" autocomplete="off" title="3–32 letters, numbers, dots, underscores, or hyphens. No spaces." required>
+                                <div class="form-hint">Used to sign in. No spaces.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editPassword">New Password</label>
+                                <input type="password" class="form-control" id="editPassword" autocomplete="new-password" placeholder="Leave blank to keep">
+                                <div class="form-hint">8+ characters with uppercase, lowercase, number, and symbol.</div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editRole">Access Role</label>
+                                <select class="form-select" id="editRole" required>
+                                    <option value="staff">Staff</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editContactNumber">Phone / Contact Number</label>
+                                <input data-phone-number type="tel" class="form-control" id="editContactNumber" inputmode="numeric" minlength="11" maxlength="11" pattern="[0-9]{11}" placeholder="09XXXXXXXXX" title="Use 09XXXXXXXXX or +63 9XXXXXXXXX." aria-describedby="editContactHelp" required>
+                                <div id="editContactHelp" class="form-hint">Type the 10 digits after +63, for example 9123456789.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editEmail">Email (for sign-in codes)</label>
+                                <input type="email" class="form-control" id="editEmail" maxlength="254" autocomplete="off" placeholder="name@gmail.com">
+                                <div class="form-hint">Empty = sign in with the password only.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label field-label" for="editStatus">Account Status</label>
+                                <select class="form-select" id="editStatus" required>
+                                    <option value="active">Active</option>
+                                    <option value="not active">Not Active</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="cancelEditUserButton" class="btn btn-light" onclick="closeEditUserAccess()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Access Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script>
+        let usersData = [];
+        let staffPage = 1;
+        const staffPageSize = 10;
+        const editUserElement = document.getElementById('editUserModal');
+        const editUserModal = new bootstrap.Modal(editUserElement);
+
+        function closeEditUserAccess() {
+            try { editUserModal.hide(); } catch (error) { console.warn('Bootstrap modal cleanup skipped.', error); }
+            editUserElement.classList.remove('show');
+            editUserElement.style.display = 'none';
+            editUserElement.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('padding-right');
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            document.activeElement?.blur();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/api/current-user');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const data = await response.json();
+                if (!data.user) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const user = data.user;
+                const userName = document.getElementById('userName');
+                if (userName) userName.textContent = user.full_name + ' (' + user.role + ')';
+            } catch (error) {
+                console.error('Could not load current user', error);
+                window.location.href = '/login';
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+                const container = document.getElementById('usersTableContainer');
+
+                if (!response.ok || !data.success || !Array.isArray(data.users)) throw new Error('Unable to load users.');
+
+                usersData = data.users;
+                renderStaffAccounts();
+            } catch (error) {
+                console.error('Error loading users', error);
+                usersData = [];
+                document.getElementById('staffPagination').replaceChildren();
+                document.getElementById('userCountLabel').textContent = '';
+                document.getElementById('usersTableContainer').innerHTML = '<div class="alert alert-danger mb-0">Unable to load users.</div>';
+            }
+        }
+
+        function renderStaffAccounts() {
+                const container = document.getElementById('usersTableContainer');
+                const totalPages = Math.max(1, Math.ceil(usersData.length / staffPageSize));
+                staffPage = Math.max(1, Math.min(staffPage, totalPages));
+                const start = (staffPage - 1) * staffPageSize;
+                document.getElementById('userCountLabel').textContent = usersData.length
+                    ? `${start + 1}–${Math.min(start + staffPageSize, usersData.length)} of ${usersData.length} accounts`
+                    : '0 accounts';
+                renderStaffPagination(totalPages);
+                if (!usersData.length) {
+                    container.innerHTML = '<div class="alert alert-info mb-0">No users found.</div>';
+                    return;
+                }
+                const rows = usersData.slice(start, start + staffPageSize).map((user) => `
+                    <tr>
+                        <td class="user-name-cell"><strong>${escapeHtml(user.full_name)}</strong><small>${escapeHtml(user.username)}</small></td>
+                        <td>${escapeHtml(olvPhone(user.contact_number) || 'Not provided')}${user.email ? `<small class="d-block text-muted">${escapeHtml(user.email)}</small>` : '<small class="d-block text-muted">No email (password only)</small>'}</td>
+                        <td><span class="badge bg-secondary">${escapeHtml(user.role)}</span></td>
+                        <td><span class="badge bg-${user.status === 'active' ? 'success' : 'warning'}">${escapeHtml(user.status)}</span></td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td class="user-action">
+                            <button type="button" class="btn btn-sm btn-primary" data-user-id="${user.user_id}" onclick="openEditUser(this)">Edit Access</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                container.innerHTML = `
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Contact</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `;
+        }
+
+        function renderStaffPagination(totalPages) {
+            const pagination = document.getElementById('staffPagination');
+            pagination.replaceChildren();
+            if (!usersData.length) return;
+            function addButton(label, page, disabled, current = false) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `movement-page-button${current ? ' active' : ''}`;
+                button.textContent = label;
+                button.disabled = disabled;
+                button.setAttribute('aria-label', label === '‹' ? 'Previous page' : label === '›' ? 'Next page' : `Page ${page}`);
+                if (current) button.setAttribute('aria-current', 'page');
+                button.addEventListener('click', () => {
+                    staffPage = page;
+                    renderStaffAccounts();
+                    pagination.querySelector('[aria-current="page"]')?.focus();
+                });
+                pagination.appendChild(button);
+            }
+            addButton('‹', staffPage - 1, staffPage === 1);
+            for (let page = 1; page <= totalPages; page++) {
+                addButton(String(page), page, false, page === staffPage);
+            }
+            addButton('›', staffPage + 1, staffPage === totalPages);
+        }
+
+        window.openEditUser = function(button) {
+            const user = usersData.find(item => Number(item.user_id) === Number(button.dataset.userId));
+            if (!user) return;
+            document.getElementById('editUserId').value = user.user_id;
+            document.getElementById('editFullName').value = user.full_name || '';
+            document.getElementById('editUsername').value = user.username || '';
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editContactNumber').value = user.contact_number || '';
+            document.getElementById('editEmail').value = user.email || '';
+            document.getElementById('editRole').value = user.role || 'staff';
+            document.getElementById('editStatus').value = user.status === 'inactive' ? 'not active' : (user.status || 'active');
+            document.getElementById('editUserMeta').textContent = `@${user.username} · Created ${new Date(user.created_at).toLocaleDateString()}`;
+            editUserModal.show();
+        };
+
+        document.getElementById('closeEditUserButton').addEventListener('click', closeEditUserAccess);
+        document.getElementById('cancelEditUserButton').addEventListener('click', closeEditUserAccess);
+        editUserElement.addEventListener('click', event => {
+            if (event.target === editUserElement) closeEditUserAccess();
+        });
+        document.addEventListener('click', event => {
+            const closeTarget = event.target.closest('#closeEditUserButton, #cancelEditUserButton');
+            if (!closeTarget) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            closeEditUserAccess();
+        }, true);
+
+        document.getElementById('editUserForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const submitButton = event.submitter || this.querySelector('[type="submit"]');
+            const newPassword = document.getElementById('editPassword').value;
+            if (newPassword && !(newPassword.length >= 8 && /[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) && /[0-9]/.test(newPassword) && /[^A-Za-z0-9]/.test(newPassword))) {
+                alert('New password must be at least 8 characters and include uppercase, lowercase, number, and special character.');
+                return;
+            }
+            submitButton.disabled = true;
+            try {
+                const response = await fetch('/api/users/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: Number(document.getElementById('editUserId').value),
+                        username: document.getElementById('editUsername').value.trim(),
+                        password: newPassword,
+                        full_name: document.getElementById('editFullName').value.trim(),
+                        contact_number: document.getElementById('editContactNumber').value.trim(),
+                        email: document.getElementById('editEmail').value.trim(),
+                        role: document.getElementById('editRole').value,
+                        status: document.getElementById('editStatus').value
+                    })
+                });
+                const data = await response.json();
+                if (!data.success) throw new Error(data.message || 'Unable to update user.');
+                closeEditUserAccess();
+                await Promise.all([loadUsers(), loadCurrentUser()]);
+                alert(data.message);
+            } catch (error) {
+                console.error('Error updating user', error);
+                alert(error.message || 'Unable to update user.');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        document.getElementById('createUserForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const payload = {
+                full_name: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                contact_number: document.getElementById('contactNumber').value.trim(),
+                password: document.getElementById('password').value,
+                confirm_password: document.getElementById('password').value,
+                email: document.getElementById('email').value.trim(),
+                role: document.getElementById('role').value
+            };
+
+            try {
+                const response = await fetch('/api/users/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeCreateUser();
+                    alert('User created successfully.');
+                    await loadUsers();
+                } else {
+                    alert(data.message || 'Unable to create user.');
+                }
+            } catch (error) {
+                console.error('Error creating user', error);
+                alert('Unable to create user.');
+            }
+        });
+
+        document.getElementById('refreshUsersButton').addEventListener('click', loadUsers);
+
+        // "Create Account" opens the new-account form as a pop-up.
+        const createUserDialog = document.getElementById('createUserDialog');
+        function closeCreateUser() {
+            document.getElementById('createUserForm').reset();
+            if (createUserDialog.open) createUserDialog.close();
+        }
+        document.getElementById('openCreateUserButton').addEventListener('click', () => {
+            document.getElementById('createUserForm').reset();
+            createUserDialog.showModal();
+            document.getElementById('fullName').focus();
+        });
+        document.getElementById('closeCreateUserButton').addEventListener('click', closeCreateUser);
+        document.getElementById('cancelCreateUserButton').addEventListener('click', closeCreateUser);
+        loadCurrentUser();
+        loadUsers();
+    </script>
+<script src="/js/customer-accounts.js"></script>
+</body>
+</html>

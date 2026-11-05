@@ -1,0 +1,31 @@
+# Render settings for running the OLV system 24/7 in the cloud.
+# See docs/cloud-hosting.md. Values marked "sync: false" are typed in on Render's
+# website (they are secrets or your own choices), never written here.
+services:
+  - type: web
+    name: olv-water
+    runtime: node
+    region: singapore          # closest Render region to the Philippines
+    plan: starter              # a saved disk needs a paid plan (about US$7/month)
+    buildCommand: npm ci --omit=dev
+    startCommand: node scripts/start-cloud.js
+    healthCheckPath: /api/public/info
+    disk:
+      name: olv-data
+      mountPath: /var/data     # the database and its daily backups live here
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: OLV_DB_PATH
+        value: /var/data/olv_database.db
+      - key: OLV_IMPORT_TOKEN  # one-time secret for uploading the station's data
+        sync: false
+      - key: SITE_URL          # your own .com later, e.g. olvwater.com (optional)
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: REPORT_RECIPIENT
+        sync: false

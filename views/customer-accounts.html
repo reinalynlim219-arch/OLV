@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Customer Account Management</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/customers.css">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+<script src="/js/password-eye.js" defer></script>
+<script src="/js/phone-validation.js" defer></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<main class="container">
+<header>
+<h1>Customer Account Management</h1>
+<p>Manage registered customer usernames, passwords, and portal access.</p>
+<a href="/staff-accounts" class="back-dashboard">Manage Accounts</a>
+</header>
+<p id="accountsMessage" role="status"></p>
+<div class="toolbar">
+<input id="accountSearch" type="search" placeholder="Search name, username, contact, or email" aria-label="Search customer accounts">
+<select id="accountStatusFilter" aria-label="Filter login status"><option value="all">All login statuses</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="pending">Pending verification</option></select>
+<button id="refreshAccounts" type="button">Refresh list</button>
+</div>
+<div class="table-container"><table><thead><tr><th>Customer</th><th>Username</th><th>Contact</th><th>Email</th><th>Email verification</th><th>Login status</th><th>Action</th></tr></thead><tbody id="accountRows"><tr><td colspan="7">Loading customer accounts...</td></tr></tbody></table></div>
+</main>
+<dialog id="customerAccountDialog" aria-labelledby="customerAccountTitle">
+    <form id="customerAccountForm">
+        <h2 id="customerAccountTitle">Edit customer account</h2>
+        <p id="customerAccountMessage" role="status"></p>
+        <input type="hidden" id="accountCustomerId">
+        <fieldset class="mb-3"><legend class="h6">Customer email</legend>
+            <label for="accountEmail">Email address</label><input class="form-control" id="accountEmail" type="email" maxlength="254" autocomplete="off">
+            <p id="accountEmailStatus" role="status"></p>
+            <button class="btn btn-outline-primary" type="button" id="sendAccountEmailLink">Send confirmation link</button>
+            <small>A confirmation link is emailed to the new address. The email is saved only after the customer opens that link. Until then, the saved email stays unchanged.</small>
+        </fieldset>
+        <div class="form-group"><label for="accountContact">Contact number</label><input data-phone-number id="accountContact" type="tel" maxlength="16" autocomplete="off" placeholder="09XXXXXXXXX" required aria-describedby="accountContactHelp"><small id="accountContactHelp">Type the 10 digits after +63.</small></div>
+        <div class="form-group"><label for="accountUsername">Username</label><input id="accountUsername" autocomplete="off" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]{3,32}" required></div>
+        <div class="form-group"><label for="accountPassword">New password</label><div class="account-password-field"><input id="accountPassword" type="password" autocomplete="new-password" minlength="8" aria-describedby="accountPasswordHelp"><button type="button" id="toggleAccountPassword" class="password-toggle" aria-label="Show password" aria-controls="accountPassword" aria-pressed="false" title="Show password"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path id="accountPasswordSlash" d="m3 3 18 18" style="display:none"></path></svg></button></div><small id="accountPasswordHelp">Leave blank to keep the current password. Use 8+ characters with uppercase, lowercase, a number, and a special character.</small></div>
+        <div class="form-group"><label for="accountStatus">Login status</label><select id="accountStatus" required><option value="active">Active</option><option value="inactive">Inactive</option><option value="pending">Pending verification</option></select></div>
+        <div class="modal-buttons"><button id="saveCustomerAccount" type="submit">Save account</button><button id="cancelCustomerAccount" type="button">Cancel</button></div>
+    </form>
+</dialog>
+<script src="/js/customer-accounts.js"></script>
+</body>
+</html>

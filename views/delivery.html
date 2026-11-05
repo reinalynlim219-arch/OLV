@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Delivery Management - OLV Water Refilling Station</title>
+<link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/deliveries.css">
+<script src="/js/phone-validation.js" defer></script>
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="page-title">Delivery Management</h1>
+            <p class="text-muted mb-0">Schedule, assign, monitor, and confirm deliveries in one page.</p>
+        </div>    </div>
+
+    <!-- Summary cards: counts only (not clickable). -->
+    <div class="delivery-stats mb-4">
+        <div class="delivery-stat stat-total" data-status="all">
+            <span class="stat-text"><span class="stat-label">Total delivery</span><span id="totalDeliveries" class="stat-number">0</span></span>
+        </div>
+        <div class="delivery-stat stat-scheduled" data-status="scheduled">
+            <span class="stat-text"><span class="stat-label">Scheduled</span><span id="scheduledDeliveries" class="stat-number">0</span></span>
+        </div>
+        <div class="delivery-stat stat-out" data-status="out_for_delivery">
+            <span class="stat-text"><span class="stat-label">Out for delivery</span><span id="outForDelivery" class="stat-number">0</span></span>
+        </div>
+        <div class="delivery-stat stat-awaiting" data-status="awaiting_customer">
+            <span class="stat-text"><span class="stat-label">Awaiting customer</span><span id="awaitingCustomer" class="stat-number">0</span></span>
+        </div>
+    </div>
+
+
+    <!-- Batches and route order: one trip carries at most the vehicle's capacity,
+         and stops inside a trip are visited nearest-first. -->
+    <section class="tracking-card mb-4" aria-labelledby="planTitle">
+        <div class="card-header-custom">
+            <div>
+                <h5 class="mb-0" id="planTitle">Delivery Sequence</h5>
+                <div id="planRules" class="plan-rules"></div>
+            </div>
+            <button type="button" id="btnPlanSettings" class="btn btn-outline-secondary" hidden>Delivery settings</button>
+        </div>
+        <div id="planBody" class="plan-body"><p class="empty-message mb-0">Loading the delivery sequence...</p></div>
+    </section>
+
+    <section class="tracking-card mb-4" aria-labelledby="remitTitle">
+        <div class="card-header-custom"><h5 class="mb-0" id="remitTitle">Cash to remit</h5></div>
+        <div id="remitBody" class="plan-body"><p class="empty-message mb-0">Loading...</p></div>
+    </section>
+
+    <div class="tracking-card">
+        <div class="card-header-custom"><h5 class="mb-0">Delivery list</h5><button type="button" id="btnAddDelivery" class="btn btn-primary">+ Schedule Delivery</button></div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 delivery-table">
+                <thead><tr><th>Customer</th><th>Items</th><th>Schedule</th><th>Address</th><th>Assigned to</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="deliveryTableBody"><tr><td colspan="7" class="empty-message">Loading deliveries...</td></tr></tbody>
+            </table>
+        </div>
+        <div id="deliveryPagination" class="delivery-pagination" aria-label="Delivery list pages"></div>
+    </div>
+</div>
+
+<div id="deliveryModal" class="modal">
+<div class="modal-content delivery-modal-content">
+    <h2 id="deliveryModalTitle">Schedule Delivery</h2>
+    <input type="hidden" id="deliveryId">
+
+    <!-- Choosing an order fills in the details below; they can still be changed.
+         With "No order", staff type them (a delivery without an order has no receipt,
+         payment or stock change). -->
+    <label for="deliveryOrder">Customer Order <span class="text-muted fw-normal">(optional)</span></label>
+    <select id="deliveryOrder">
+        <option value="">No order — type the details below</option>
+    </select>
+    <div id="selectedOrderSummary" class="order-summary" hidden></div>
+
+    <label for="deliveryCustomerName">Customer Name</label>
+    <input type="text" id="deliveryCustomerName" placeholder="e.g. Juan Dela Cruz" maxlength="80" required autocomplete="off">
+
+    <label for="deliveryContactNumber">Contact Number</label>
+    <input data-phone-number type="text" id="deliveryContactNumber" inputmode="tel" maxlength="11" placeholder="9XXXXXXXXX" required autocomplete="off">
+
+    <label for="deliveryReason">Reason of Delivery</label>
+    <input type="text" id="deliveryReason" value="Customer order delivery" required>
+
+    <label for="deliveryItems">Items to Deliver</label>
+    <textarea id="deliveryItems" rows="2" placeholder="e.g. Round gallon refill × 3" maxlength="300" required></textarea>
+
+    <div class="form-row">
+        <div><label for="deliveryDate">Delivery Date</label><input type="date" id="deliveryDate" required></div>
+        <div><label for="deliveryTime">Delivery Time</label><input type="time" id="deliveryTime"></div>
+    </div>
+
+    <label for="deliveryAssignee">Assigned staff / driver</label>
+    <select id="deliveryAssignee"><option value="">Unassigned</option></select>
+
+    <label for="deliveryCity">City / Municipality</label>
+    <select id="deliveryCity"><option value="" disabled>Choose city / municipality</option><option value="Legazpi City">Legazpi City</option><option value="Daraga">Daraga</option></select>
+
+    <label for="deliveryBarangay">Barangay</label>
+    <!-- Lists only the barangays of the chosen city / municipality. -->
+    <select id="deliveryBarangay" required></select>
+
+    <div class="form-row">
+        <div><label for="deliveryZone">Zone</label><input type="text" id="deliveryZone"></div>
+        <div><label for="deliveryHouseNumber">House / Lot Number</label><input type="text" id="deliveryHouseNumber" required></div>
+    </div>
+
+    <label for="deliveryStreet">Street</label>
+    <input type="text" id="deliveryStreet" required>
+
+    <label for="deliveryLandmark">Landmark</label>
+    <input type="text" id="deliveryLandmark" placeholder="Nearby store, building, or landmark">
+
+    <div class="modal-buttons">
+        <button type="button" id="saveDelivery" class="btn btn-primary">Schedule Delivery</button>
+        <button type="button" id="cancelDelivery" class="btn btn-secondary">Cancel</button>
+    </div>
+</div>
+</div>
+<!-- Drop-off confirmation with an optional photo (same idea as the customer's receipt photo). -->
+<dialog id="dropoffDialog" class="dropoff-dialog" aria-labelledby="dropoffTitle">
+    <form id="dropoffForm">
+        <h2 id="dropoffTitle" class="h5">Confirm drop-off</h2>
+        <p id="dropoffIntro" class="small text-muted">Attach a photo of the dropped-off order if you wish. A photo is optional.</p>
+        <label for="dropoffPhoto" class="form-label">Drop-off photo (optional)</label>
+        <input id="dropoffPhoto" type="file" class="form-control" accept="image/jpeg,image/png,image/webp" aria-describedby="dropoffHelp">
+        <button id="dropoffCameraButton" type="button" class="btn btn-outline-primary btn-sm mt-2">Take a photo</button>
+        <input id="dropoffCamera" type="file" accept="image/*" capture="environment" hidden>
+        <p id="dropoffHelp" class="form-text">Take a photo with your phone or choose an existing image. JPEG, PNG, or WebP, up to 10 MB.</p>
+        <img id="dropoffPreview" alt="Drop-off photo preview" class="dropoff-preview" hidden>
+        <div class="form-check my-3">
+            <input class="form-check-input" type="checkbox" id="dropoffCash" checked>
+            <label class="form-check-label" for="dropoffCash" id="dropoffCashLabel">Cash collected from the customer</label>
+            <div class="form-text">The cash is added to the driver's remittance for the station.</div>
+        </div>
+        <!-- Station gallons handed over or collected at the door (optional). -->
+        <fieldset class="row g-2 mb-2">
+            <legend class="form-label fs-6 mb-1">Station gallons (optional)</legend>
+            <div class="col-6"><label for="dropoffGallonsLent" class="form-label small">Lent to the customer</label><input id="dropoffGallonsLent" type="number" class="form-control" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
+            <div class="col-6"><label for="dropoffGallonsReturned" class="form-label small">Collected (returned)</label><input id="dropoffGallonsReturned" type="number" class="form-control" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
+            <div class="form-text">Only the station's own gallons. A customer's own gallon swapped for a refill is not counted.</div>
+        </fieldset>
+        <p id="dropoffMessage" class="small text-danger" role="status"></p>
+        <div class="d-flex justify-content-end gap-2">
+            <button id="dropoffCancel" type="button" class="btn btn-outline-secondary">Cancel</button>
+            <button id="dropoffSubmit" type="submit" class="btn btn-success">Confirm drop-off</button>
+        </div>
+    </form>
+</dialog>
+<!-- Admin only: how trips are planned. -->
+<dialog id="planSettingsDialog" class="dropoff-dialog" aria-labelledby="planSettingsTitle">
+    <form id="planSettingsForm">
+        <h2 id="planSettingsTitle" class="h5">Delivery settings</h2>
+        <label for="setCapacity" class="form-label">Gallons one trip can carry</label>
+        <input id="setCapacity" type="number" class="form-control" min="1" max="1000" step="1" required>
+        <div class="row g-2 mt-1">
+            <div class="col-6"><label for="setFirstTrip" class="form-label">First trip leaves</label><input id="setFirstTrip" type="time" class="form-control" required></div>
+            <div class="col-6"><label for="setLastTrip" class="form-label">Last trip leaves</label><input id="setLastTrip" type="time" class="form-control" required></div>
+        </div>
+        <label for="setTripMinutes" class="form-label mt-2">Minutes per trip (out and back)</label>
+        <input id="setTripMinutes" type="number" class="form-control" min="10" max="600" step="1" required>
+        <label for="setWalkRadius" class="form-label mt-2">Walking distance from the station (meters)</label>
+        <input id="setWalkRadius" type="number" class="form-control" min="0" max="1000" step="1" required aria-describedby="walkHelp">
+        <p id="walkHelp" class="form-text">Customers this close are carried or pushed over and do not use space on the vehicle. Use 0 to turn this off.</p>
+        <label for="setStation" class="form-label">Station location</label>
+        <input id="setStation" type="text" class="form-control" placeholder="e.g. 13.1514, 123.7444 or a Google Maps link" aria-describedby="stationHelp">
+        <p id="stationHelp" class="form-text">Trips start from here. Paste the station's Google Maps or Street View link, or type the numbers (in Google Maps, right-click the station and click the numbers to copy them).</p>
+        <p id="planSettingsMessage" class="small text-danger" role="status"></p>
+        <div class="d-flex justify-content-end gap-2">
+            <button id="planSettingsCancel" type="button" class="btn btn-outline-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save settings</button>
+        </div>
+    </form>
+</dialog>
+<script src="/js/delivery-tracking.js"></script>
+<script src="/js/barangays.js"></script>
+<script src="/js/deliveries.js"></script>
+<script src="/js/delivery-plan.js"></script>
+</body>
+</html>

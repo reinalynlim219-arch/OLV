@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Recently Deleted - OLV Water Refilling Station</title>
+<link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<main class="container py-4">
+    <div class="mb-4">
+        <h1 class="page-title">Recently Deleted</h1>
+        <p class="text-muted mb-0">Products removed from the inventory stay here until they are restored or deleted permanently.</p>
+    </div>
+    <div class="tracking-card">
+        <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="h5 mb-0"><i class="bi bi-trash3" aria-hidden="true"></i> Removed products <span id="deletedCount" class="badge rounded-pill text-bg-secondary">0</span></h2>
+            <input type="search" id="deletedSearch" class="form-control deleted-search" placeholder="Search removed products" aria-label="Search removed products">
+        </div>
+        <div class="p-3">
+            <p id="deletedMessage" class="small mb-2" role="status"></p>
+            <div id="deletedList" class="removed-list"><p class="text-muted mb-0">Loading...</p></div>
+        </div>
+    </div>
+</main>
+<script src="/js/recently-deleted.js"></script>
+</body>
+</html>

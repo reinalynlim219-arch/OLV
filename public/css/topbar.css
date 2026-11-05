@@ -1,0 +1,172 @@
+/* Shared top bar for staff pages: system name on the left,
+   current user, Back to Dashboard, and Logout on the top right. */
+body.olv-page { padding: 0 !important; margin: 0; }
+body.olv-page > .container,
+body.olv-page > main { padding-left: 20px; padding-right: 20px; }
+
+.olv-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 72px;               /* same height before and after the name and buttons appear */
+    padding: 16px max(24px, calc((100vw - 1400px) / 2));
+    background: linear-gradient(135deg, #0a547d 0%, #0b7ec7 100%);
+    box-shadow: 0 14px 30px rgba(10, 61, 94, 0.18);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.olv-topbar-brand {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+.olv-topbar-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.olv-topbar-user { color: rgba(255, 255, 255, 0.88); font-size: 0.9rem; font-weight: 600; }
+.olv-topbar .olv-topbar-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    margin: 0;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    font: 700 0.95rem/1.2 "Segoe UI", Arial, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: none;
+    transition: filter 0.15s ease;
+}
+.olv-topbar .olv-topbar-btn:hover { filter: brightness(0.95); }
+.olv-topbar .olv-topbar-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.olv-topbar .olv-topbar-back { background: #f8f9fa; border-color: #f8f9fa; color: #0f172a; }
+.olv-topbar .olv-topbar-logout { background: #dc3545; border-color: #dc3545; color: #fff; }
+.olv-topbar [hidden] { display: none !important; }
+
+@media (max-width: 640px) {
+    .olv-topbar { padding: 12px 16px; }
+    .olv-topbar-brand { font-size: 1.05rem; }
+    .olv-topbar-user { display: none; }
+}
+@media print { .olv-topbar { display: none; } }
+
+/* ---------- Shared left sidebar (same look as the dashboard's) ---------- */
+body.olv-page.olv-with-sidebar { padding-left: 250px !important; }
+.olv-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1040;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px 16px;
+    overflow-y: auto;
+    scrollbar-width: none;          /* no visible scrollbar; the wheel still scrolls if needed */
+    background: linear-gradient(180deg, rgba(10, 61, 94, 0.99), rgba(12, 83, 126, 0.97));
+    box-shadow: 8px 0 30px rgba(10, 30, 42, 0.18);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+.olv-sidebar .olv-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff !important;
+    text-decoration: none;
+}
+.olv-sidebar-mark {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+.olv-sidebar-name { display: block; font-weight: 700; font-size: 1.05rem; color: #fff; }
+.olv-sidebar-brand small { display: block; color: rgba(255, 255, 255, 0.7) !important; letter-spacing: 0.09em; text-transform: uppercase; font-size: 0.78rem; }
+.olv-sidebar .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+.olv-sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    color: rgba(255, 255, 255, 0.82) !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.98rem;
+    transition: background 0.2s ease;
+}
+.olv-sidebar .nav-item[hidden] { display: none; }
+.olv-sidebar .nav-item:hover,
+.olv-sidebar .nav-item.active,
+.olv-sidebar .nav-item[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.olv-sidebar .nav-item:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.7); outline-offset: 2px; }
+.olv-sidebar .nav-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+}
+.olv-sidebar .nav-icon i { font-size: 0.95rem; line-height: 1; }
+/* Logout at the bottom of the sidebar (the top bar's own Logout is hidden, theme.css). */
+.olv-sidebar .olv-sidebar-logout {
+    margin-top: auto; width: 100%; border: 0; background: transparent; text-align: left;
+    font-family: inherit; cursor: pointer; color: #fecaca !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0 0 14px 14px; padding-top: 14px;
+}
+.olv-sidebar .olv-sidebar-logout:hover { background: rgba(220, 53, 69, 0.22); color: #fff !important; border-radius: 14px; }
+.olv-sidebar[hidden] { display: none; }
+/* Before the scripts run, the page already has its final shape, so nothing jumps or
+   flashes when moving between modules: the sidebar's place and colour are kept, and the
+   old top-bar buttons are not shown (Back is never needed; Logout is in the sidebar or,
+   on phones, in the ☰ menu). Drivers ("plain", remembered by sidebar.js) have no sidebar. */
+.olv-topbar [data-back] { display: none !important; }
+@media (min-width: 901px) {
+    html:not([data-olv-layout="plain"]) body.olv-page { padding-left: 250px !important; }
+    html:not([data-olv-layout="plain"]) body.olv-page::before {
+        content: ""; position: fixed; top: 0; bottom: 0; left: 0; z-index: 1039; width: 250px;
+        background: linear-gradient(180deg, rgba(10, 61, 94, 0.99), rgba(12, 83, 126, 0.97));
+    }
+    html:not([data-olv-layout="plain"]) body.olv-page .olv-topbar [data-logout] { display: none !important; }
+}
+@media (max-width: 900px) {
+    body.olv-page .olv-topbar [data-logout], body > nav.navbar #logoutButton { display: none !important; }
+}
+@media print { body.olv-page::before { display: none; } }
+/* On phones the sidebar would cover the page; the ☰ side menu (mobile-nav.js) is used instead. */
+@media (max-width: 900px) {
+    .olv-sidebar { display: none; }
+    body.olv-page.olv-with-sidebar { padding-left: 0 !important; }
+}
+.olv-sidebar::-webkit-scrollbar { display: none; }
+@media (max-height: 820px) {
+    .olv-sidebar { gap: 10px; padding-top: 14px; padding-bottom: 14px; }
+    .olv-sidebar .nav-item { padding-top: 8px; padding-bottom: 8px; }
+}
+@media print {
+    .olv-sidebar { display: none; }
+    body.olv-page.olv-with-sidebar { padding-left: 0 !important; }
+}
+/* With the sidebar showing, "Dashboard" is in the menu, so the top bar only
+   keeps the account menu in the top-right corner. On phones the ☰ side menu
+   has Dashboard instead. */
+@media (min-width: 901px) {
+    body.olv-with-sidebar .olv-topbar .olv-topbar-back { display: none !important; }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <meta name="theme-color" content="#0a5d8d">
+    <title>Offline - OLV Water Operations</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .offline-shell { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+        .offline-card { width: min(100%, 560px); padding: 42px; border-radius: 24px; background: rgba(255,255,255,.92); border: 1px solid rgba(149,174,201,.24); box-shadow: 0 24px 54px rgba(17,45,74,.12); text-align: center; }
+        .offline-mark { width: 64px; height: 64px; display: grid; place-items: center; margin: 0 auto 22px; border-radius: 18px; background: linear-gradient(135deg, #0b7ec7, #0a5d8d); color: #fff; font-weight: 800; letter-spacing: .08em; }
+        .offline-card h1 { color: #10263f; font-weight: 800; letter-spacing: -.04em; }
+        .offline-card p { color: #5d6f82; line-height: 1.7; }
+    </style>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+</head>
+<body>
+    <main class="offline-shell">
+        <section class="offline-card">
+            <div class="offline-mark">OLV</div>
+            <h1>You are offline</h1>
+            <p>The OLV Operations Suite cannot reach the local server right now. Reconnect to continue working with live inventory, orders, and delivery records.</p>
+            <button class="btn btn-primary" type="button" onclick="location.reload()">Try Again</button>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+    <style>.d-none { display: none !important; }</style>
+    <title>Login - OLV Water Refilling Station</title>
+    <link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+<script src="/js/phone-validation.js" defer></script>
+<script src="/js/password-eye.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+</head>
+<body>
+<div class="login-container">
+    <!-- Back to the station's public homepage. -->
+    <nav class="login-back" aria-label="Back">
+        <a href="/"><span aria-hidden="true">←</span> Back to website</a>
+    </nav>
+    <div class="login-shell">
+        <!-- The station's banner: logo, "Pure water · Pure life", and the gallon. -->
+        <header class="login-banner">
+            <img src="/images/olv-banner.jpg" alt="OLV Water Refilling — Pure water, pure life. Order now, fast and reliable delivery.">
+        </header>
+        <aside class="brand-panel ad-panel" aria-label="About OLV Water Refilling Station">
+            <div class="brand-meta">
+                <span class="ad-eyebrow">Now delivering in Legazpi City &amp; Daraga</span>
+                <h2>Clean, safe drinking water delivered to your door.</h2>
+            </div>
+            <p>OLV Water Refilling Station brings purified water refills to your home or business. Order online and follow your delivery until it arrives.</p>
+
+            <ul class="ad-offers">
+                <li><strong>Purified water refills</strong><span>For homes, offices, and stores</span></li>
+                <li><strong>Home delivery</strong><span>Brought straight to your doorstep</span></li>
+                <li><strong>Free delivery</strong><span>No delivery fee, ever</span></li>
+                <li><strong>Order online</strong><span>Track every delivery from your account</span></li>
+            </ul>
+
+            <div class="ad-contact">
+                <span class="ad-contact-title">Call or message us</span>
+                <div class="ad-phones">
+                    <span>+63 919 841 7627</span>
+                    <span>+63 968 531 0277</span>
+                </div>
+                <a class="ad-facebook" href="https://www.facebook.com/profile.php?id=61588981554478" target="_blank" rel="noopener noreferrer">Follow us on Facebook</a>
+            </div>
+            <!-- Water wave at the bottom of the panel, like the banner. -->
+            <svg class="ad-wave" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <path d="M0,60 C120,20 220,100 340,60 C440,26 520,70 600,48 L600,120 L0,120 Z" fill="rgba(255,255,255,0.10)"/>
+                <path d="M0,86 C110,56 240,120 360,84 C460,56 530,98 600,80 L600,120 L0,120 Z" fill="rgba(255,255,255,0.14)"/>
+            </svg>
+        </aside>
+
+        <div class="login-box">
+            <h1 id="authTitle">Welcome to OLV</h1>
+            <p class="login-subtitle" id="authSubtitle">Sign in to order water, follow your delivery, or manage the station.</p>
+
+            <div id="formMessage" class="alert d-none" role="alert"></div>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required autocomplete="username">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="login-password-field">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+                        <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password" aria-controls="password" aria-pressed="false" title="Show password">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path id="passwordEyeSlash" class="d-none" d="m3 3 18 18"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign in</button>
+            </form>
+
+            <button type="button" id="showRecovery" class="btn btn-link w-100 mt-2">Forgot username or password?</button>
+
+            <form id="recoveryForm" class="d-none" novalidate>
+                <hr class="my-4">
+                <h2 class="h5 mb-1">Recover your account</h2>
+                <p class="text-muted small mb-3">Enter the email address on your account. We will email you a link to set a new password. Staff without an email on file should ask the administrator to reset their password.</p>
+                <div class="mb-3">
+                    <label for="recoveryEmail" class="form-label">Account email</label>
+                    <input id="recoveryEmail" type="email" class="form-control" autocomplete="email" required placeholder="you@example.com">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Email me a reset link</button>
+                <a id="showLoginFromRecovery" href="/login" class="btn btn-link w-100 mt-2">Back to sign in</a>
+            </form>
+
+            <form id="resetForm" class="d-none" novalidate>
+                <hr class="my-4">
+                <h2 class="h5 mb-1">Set a new password</h2>
+                <p class="text-muted small mb-3">Use 8+ characters with uppercase, lowercase, number, and special character.</p>
+                <div class="mb-3">
+                    <label for="recoveryPassword" class="form-label">New password</label>
+                    <input type="password" id="recoveryPassword" class="form-control" minlength="8" autocomplete="new-password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="recoveryConfirmPassword" class="form-label">Repeat new password</label>
+                    <input type="password" id="recoveryConfirmPassword" class="form-control" minlength="8" autocomplete="new-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save new password</button>
+                <a href="/login" class="btn btn-link w-100 mt-2">Back to sign in</a>
+            </form>
+
+        <div class="account-switch mt-3">
+            <p class="text-center mb-2">Don't have an account? <button type="button" id="showRegister" class="btn btn-link p-0 align-baseline fw-semibold">Create account</button></p>
+            <div class="form-text">Staff and driver accounts are made by the administrator in Manage Accounts. Only customers use "Create account".</div>
+        </div>
+
+        <form id="registerForm" class="d-none" novalidate>
+
+            <div class="mb-3">
+                <label for="registerName" class="form-label">Full name</label>
+                <input id="registerName" class="form-control" required maxlength="80" autocomplete="name">
+            </div>
+
+            <div class="mb-3">
+                <label for="registerContact" class="form-label">Contact number</label>
+                <!-- +63 is fixed; the customer types the 10 digits after it (numbers only). -->
+                <div class="input-group">
+                    <span class="input-group-text fw-semibold" id="registerContactPrefix">+63</span>
+                    <input id="registerContact" class="form-control" type="text" inputmode="numeric" pattern="9[0-9]{9}" required autocomplete="tel-national" placeholder="9XXXXXXXXX" aria-describedby="registerContactPrefix registerContactWarning">
+                </div>
+                <div id="registerContactWarning" class="phone-number-warning" role="alert" hidden></div>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md-6 mb-3">
+                    <label for="registerCity" class="form-label">City / Municipality</label>
+                    <select id="registerCity" class="form-select" required>
+                        <option value="Legazpi City">Legazpi City</option>
+                        <option value="Daraga">Daraga</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="registerBarangay" class="form-label">Barangay</label>
+                    <!-- Lists only the barangays of the chosen city / municipality. -->
+                    <select id="registerBarangay" class="form-select" required></select>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="registerStreet" class="form-label">Street name</label>
+                    <input id="registerStreet" class="form-control" required maxlength="60" autocomplete="address-line1" placeholder="e.g. Rizal Street">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="registerHouseNumber" class="form-label">House / Lot Number</label>
+                    <input id="registerHouseNumber" class="form-control" required maxlength="30" placeholder="e.g. 123, 12-A, Lot 5 Block 3">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="registerLandmark" class="form-label">Landmark</label>
+                    <input id="registerLandmark" class="form-control" maxlength="80" placeholder="e.g. Near Bitano Elementary School">
+                </div>
+                <div id="registerAddressError" class="col-12 text-danger small mb-2" role="alert" hidden></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="registerUsername" class="form-label">Username</label>
+                <input id="registerUsername" class="form-control" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]{3,32}" required autocomplete="username">
+            </div>
+
+            <div class="mb-3">
+                <label for="registerPassword" class="form-label">Password</label>
+                <input type="password" id="registerPassword" class="form-control" minlength="8" required autocomplete="new-password">
+                <div id="passwordStrength" class="form-text">Use 8+ characters with uppercase, lowercase, number, and special character.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" id="registerConfirmPassword" class="form-control" minlength="8" required autocomplete="new-password">
+                <div id="passwordMatch" class="form-text"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email</label>
+                <input id="registerEmail" type="email" class="form-control" autocomplete="email" required placeholder="you@example.com">
+            </div>
+
+            <!-- Data Privacy Act of 2012 (Republic Act No. 10173): notice and consent. -->
+            <details class="privacy-notice mb-2">
+                <summary>Privacy notice — how we use your information</summary>
+                <div class="small mt-2">
+                    <p class="mb-2">OLV Water Refilling Station collects your <strong>name, contact number, email, delivery address</strong>, and, if you choose to save it, your <strong>home location</strong>. We use them only to take and deliver your orders, contact you about them, send your receipts, and keep sales and delivery records.</p>
+                    <p class="mb-2">Only station staff and our delivery drivers can see your details. We do not sell or share them with anyone else. Records are kept on the station's computer for as long as you are our customer and as required for business records.</p>
+                    <p class="mb-0">Under the Data Privacy Act of 2012 (RA 10173) you may ask to see, correct, or delete your information, or withdraw your consent, by calling or messaging the station at +63 919 841 7627 or +63 968 531 0277. You can also close your account from your account settings.</p>
+                </div>
+            </details>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="registerConsent" required>
+                <label class="form-check-label small" for="registerConsent">I have read the privacy notice and I agree to OLV Water Refilling Station collecting and using my information to process my orders.</label>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Create account</button>
+            <button type="button" id="showLogin" class="btn btn-link w-100 mt-2">I already have an account</button>
+        </form>
+
+        <!-- 6-digit code from Gmail: finishing sign-up, or the second step of signing in. -->
+        <form id="checkEmailPanel" class="d-none" novalidate>
+            <hr class="my-4">
+            <h2 class="h5" id="codeTitle">Enter the code from your email</h2>
+            <div id="verificationNotice" class="alert alert-info small" role="status"></div>
+            <label for="otpCode" class="form-label">6-digit code</label>
+            <input id="otpCode" class="form-control otp-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{6}" placeholder="••••••" required>
+            <p class="text-muted small mt-2">Check your spam folder if you do not see the email. The code expires in 10 minutes.</p>
+            <button type="submit" class="btn btn-primary w-100">Confirm code</button>
+            <div class="d-flex justify-content-between mt-2">
+                <button type="button" id="resendCode" class="btn btn-link p-0">Send a new code</button>
+                <button type="button" id="backToLoginFromEmail" class="btn btn-link p-0">Back to sign in</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<script src="/js/barangays.js"></script>
+<script src="/js/select-search.js"></script>
+<script src="/js/scripts.js"></script>
+</body>
+</html>

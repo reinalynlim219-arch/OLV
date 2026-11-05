@@ -1,0 +1,42 @@
+{
+  "name": "olv_tracking_and_inventory_system",
+  "version": "1.0.0",
+  "description": "OLV Water Refilling Station Tracking and Inventory Management System",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "check": "node scripts/verify-system.js",
+    "test:accounts": "node scripts/verify-accounts.js",
+    "start:configured": "node --env-file=.env app.js",
+    "email:test": "node scripts/test-email.js",
+    "https:cert": "node scripts/make-https-cert.js",
+    "start:https": "node scripts/start-https.js",
+    "online": "node scripts/start-online.js",
+    "start:cloud": "node scripts/start-cloud.js",
+    "cloud:upload": "node scripts/upload-to-cloud.js",
+    "test:system": "node scripts/verify-system-flows.js",
+    "test:browser": "node scripts/verify-system-flows.js --browser",
+    "test:customer-email": "node scripts/verify-customer-email.js",
+    "test:delivery-tracking": "node scripts/verify-delivery-tracking.js",
+    "test:delivery-plan": "node scripts/verify-delivery-plan.js",
+    "test:audit": "node scripts/verify-audit.js",
+    "test:live": "node scripts/verify-live-features.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "nodemailer": "^10.0.9",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "selfsigned": "^2.4.1"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  }
+}

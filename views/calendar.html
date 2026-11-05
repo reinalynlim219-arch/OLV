@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Calendar - OLV Water Refilling Station</title>
+<link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<main class="container py-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <h1 class="page-title">Calendar</h1>
+            <p class="text-muted mb-0" id="calendarIntro">Deliveries by scheduled day, and orders by the day they were placed. Click a day to see its list.</p>
+        </div>    </div>
+    <div class="tracking-card">
+        <div class="card-header-custom cal-toolbar">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="calPrev" aria-label="Previous month"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+                <h2 class="h5 mb-0 cal-month" id="calMonth" aria-live="polite">Month</h2>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="calNext" aria-label="Next month"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-link btn-sm" id="calToday">Today</button>
+            </div>
+            <div class="btn-group cal-view" role="group" aria-label="What to show" id="calViewGroup">
+                <input type="radio" class="btn-check" name="calView" id="viewDeliveries" value="deliveries" checked>
+                <label class="btn btn-outline-primary btn-sm" for="viewDeliveries">Delivery schedule</label>
+                <input type="radio" class="btn-check" name="calView" id="viewBoth" value="both">
+                <label class="btn btn-outline-primary btn-sm" for="viewBoth">Orders + deliveries</label>
+            </div>
+        </div>
+        <div class="cal-layout">
+            <div>
+                <div class="cal-grid" id="calGrid" role="grid" aria-labelledby="calMonth"></div>
+                <p class="cal-legend small mb-0">
+                    <span class="cal-chip cal-scheduled">Scheduled</span>
+                    <span class="cal-chip cal-out">Out / dropped off</span>
+                    <span class="cal-chip cal-done">Delivered</span>
+                    <span class="cal-chip cal-cancelled">Cancelled</span>
+                    <span class="cal-chip cal-order" data-orders-only>Orders placed</span>
+                </p>
+            </div>
+            <aside class="cal-day" aria-labelledby="calDayTitle">
+                <h3 class="h6" id="calDayTitle">Choose a day</h3>
+                <div id="calDayList" role="status"><p class="text-muted small mb-0">Click a day on the calendar.</p></div>
+            </aside>
+        </div>
+    </div>
+</main>
+<script src="/js/delivery-tracking.js"></script>
+<script src="/js/calendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png"><title>Customer history</title><link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/station-records.css"><link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head><body><main class="records-page">
+<header class="history-header">
+    <div class="history-heading">
+        <a href="/customers" class="history-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Customers</a>
+        <h1 id="historyTitle">Customer history</h1>
+        <p id="historyDetails" class="history-details"></p>
+    </div>
+    <button type="button" id="printHistory" class="history-print"><i class="bi bi-printer" aria-hidden="true"></i> Print history</button>
+</header>
+<p id="historyMessage" role="status">Loading records...</p>
+<div id="historySections"></div>
+</main><script src="/js/customer-history.js"></script></body></html>

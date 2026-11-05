@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Dashboard - OLV Water Refilling Station</title>
+<link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<!-- Same layout as the other pages: shared sidebar (sidebar.js) and blue top bar. -->
+<body class="olv-page dashboard-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back hidden>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+        <main class="container dashboard-shell py-4">
+            <div class="dashboard-hero mb-4">
+                <div>
+                    <span class="hero-badge">Station overview</span>
+                    <h1 class="dashboard-title">Water Station Operations Dashboard</h1>
+                    <p class="text-muted mb-0">Monitor stock levels, customer activity, delivery flow, and order performance from a single operational view.</p>
+                </div>
+            </div>
+
+            <div id="dashboardMessage" class="alert alert-danger d-none"></div>
+            <div id="setupReminder" class="alert alert-warning d-none" role="status"></div>
+            <!-- Admin only: automatic daily backups. -->
+            <section id="backupPanel" class="backup-panel mb-4 d-none" aria-labelledby="backupTitle">
+                <div>
+                    <h2 id="backupTitle" class="h6 mb-1">Database backups</h2>
+                    <p id="backupStatus" class="small mb-0 text-muted">Loading...</p>
+                </div>
+                <div class="backup-actions">
+                    <button type="button" id="backupNow" class="btn btn-sm btn-outline-primary">Back up now</button>
+                    <a id="backupDownload" class="btn btn-sm btn-outline-secondary" href="/api/backups/download">Download latest</a>
+                </div>
+            </section>
+
+            <div class="mb-4 analytics-grid">
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">TOTAL INVENTORY ITEMS</div><div id="totalInventory" class="summary-number">0</div></div></div>
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">LOW STOCK ALERT</div><div id="lowStock" class="summary-number text-danger">0</div></div></div>
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">ACTIVE PRODUCTS</div><div id="activeProducts" class="summary-number text-success">0</div></div></div>
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">ORDERS</div><div id="pendingOrders" class="summary-number text-primary">0</div></div></div>
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">SALES (30 DAYS)</div><div id="salesTotal" class="summary-number text-success">₱0.00</div></div></div>
+                <div class="analytics-item"><div class="summary-card"><div class="summary-label">COMPLETED ORDERS (30 DAYS)</div><div id="salesVelocity" class="summary-number text-info">0</div></div></div>
+            </div>
+
+            <section class="card dashboard-card mb-4">
+                <div class="card-body p-4">
+                    <div class="chart-head mb-3">
+                        <div>
+                            <h2 class="h4 mb-1">Daily sales</h2>
+                            <p class="text-muted small mb-1"><span id="chartPeriod">Last 30 days</span> · Philippine pesos · Philippine time</p>
+                            <p class="small mb-0">Total for this period: <span id="chartTotal" class="chart-total">₱0.00</span></p>
+                        </div>
+                        <div class="chart-side">
+                            <div class="chart-controls">
+                                <span class="chart-controls-label" id="chartMonthLabel">Show month</span>
+                                <div class="month-picker">
+                                    <button type="button" id="chartMonthButton" class="btn btn-sm month-picker-button" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="chartMonthLabel chartMonthButton">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+                                        <span id="chartMonthText">Choose month</span>
+                                    </button>
+                                    <div id="chartMonthPopup" class="month-picker-popup" role="dialog" aria-label="Choose a month" hidden>
+                                        <div class="month-picker-year">
+                                            <button type="button" id="chartYearPrev" class="month-picker-nav" aria-label="Previous year">‹</button>
+                                            <strong id="chartYear">2026</strong>
+                                            <button type="button" id="chartYearNext" class="month-picker-nav" aria-label="Next year">›</button>
+                                        </div>
+                                        <div id="chartMonthGrid" class="month-picker-grid"></div>
+                                    </div>
+                                </div>
+                                <button type="button" id="chartLast30" class="btn btn-sm btn-outline-primary">Last 30 days</button>
+                            </div>
+                            <span id="dashboardUpdated" class="refresh-text" role="status"><span class="live-dot" aria-hidden="true"></span> Loading…</span>
+                        </div>
+                    </div>
+                    <!-- Zoom and move: drag the graph or the window in the strip below it. -->
+                    <div class="chart-toolbar">
+                        <span id="chartRange" class="chart-range" role="status"></span>
+                        <div class="chart-zoom" role="group" aria-label="Zoom the graph">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="chartZoomIn" aria-label="Zoom in (fewer days)"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="chartZoomOut" aria-label="Zoom out (more days)"><i class="bi bi-zoom-out" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="chartShowAll">Show all days</button>
+                        </div>
+                    </div>
+                    <div class="chart-frame">
+                        <div id="valueTrend" class="chart-scroll">Loading chart...</div>
+                        <div id="chartTooltip" class="chart-tooltip" hidden></div>
+                    </div>
+                    <div id="chartOverview" class="chart-overview" aria-hidden="true"></div>
+                    <p id="trendDetail" class="text-center text-muted small mt-2 mb-0" role="status">Drag the graph (or the window in the strip below) to move through the days. Point at or tap a day to see its sales.</p>
+                    <p class="text-muted small mt-3 mb-0">Sales include completed orders, grouped by the day the order was placed. Days without sales show ₱0.00.</p>
+                </div>
+            </section>
+
+            <div class="row g-4">
+                <section class="col-12">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                <div><h2 class="h4 mb-0">Current Inventory Levels</h2></div>
+                                <span id="inventoryLowSummary" class="small fw-semibold" role="status"></span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead><tr><th>Product</th><th>Unit</th><th>Quantity</th><th>Minimum</th><th>Status</th></tr></thead>
+                                    <tbody id="inventoryLevels"><tr><td colspan="5" class="text-center text-muted">Loading...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <section class="card dashboard-card mt-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                        <div>
+                            <h2 class="h4 mb-1">Recent Inventory Transactions</h2>
+                            <p class="text-muted small">Latest arrivals, stock-outs, and adjustments, newest first. New entries appear by themselves.</p>
+                        </div>
+                        <span id="transactionsUpdated" class="refresh-text" role="status"><span class="live-dot" aria-hidden="true"></span> Loading…</span>
+                    </div>
+                    <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Time</th><th>Item</th><th>Event</th><th>Quantity</th><th>Reason</th></tr></thead><tbody id="recentTransactions"><tr><td colspan="5" class="text-center text-muted">Loading...</td></tr></tbody></table></div>
+                    <div id="recentTransactionsPagination" class="movement-pagination" aria-label="Recent inventory transaction pages"></div>
+                </div>
+            </section>
+        </main>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

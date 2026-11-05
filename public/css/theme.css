@@ -1,0 +1,705 @@
+/* ============================================================
+   Night mode switch + dark colors for every page.
+   Loaded last on each page; everything below only applies when
+   <html data-theme="dark"> is set by /js/theme.js.
+   ============================================================ */
+
+/* ---------- The switch button ---------- */
+.olv-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    margin: 0;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 11px;
+    background: transparent;
+    color: #fff;
+    font: 700 0.9rem/1.2 "Segoe UI", Arial, sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.olv-theme-toggle:hover { background: rgba(255, 255, 255, 0.15); }
+.olv-theme-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.olv-topbar .olv-theme-toggle { min-height: 40px; }
+/* Pages without a top bar (login, offline, customer history). */
+.olv-theme-toggle-floating {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 2000;
+    border-color: #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+.olv-theme-toggle-floating:hover { background: #f1f5f9; }
+@media print { .olv-theme-toggle { display: none !important; } }
+
+/* ---------- Dark palette ---------- */
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --primary-soft: #0f2a3d;
+    --accent-soft: #0f2e2a;
+    --navy: #e2e8f0;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --surface: #1e293b;
+    --surface-alt: #172234;
+    --line: #334155;
+    --shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] body:not(.login-container) {
+    background: #0b1220 !important;
+    color: #e2e8f0;
+}
+
+/* Surfaces: cards, panels, pop-ups, tables */
+html[data-theme="dark"] :is(.card, .tracking-card, .table-container, .summary-card, .records-card,
+    #paymentsSection, .modal-content, dialog, .login-box, .content-panel, .topbar-glass, .module-card,
+    .report-stat, .order-summary, .track-summary, .edit-user-meta, .user-create-card, .dashboard-card,
+    .report-document, .report-result, .low-stock-item, .product-choice, .list-group-item) {
+    background: #1e293b !important;
+    color: #e2e8f0;
+    border-color: #334155 !important;
+    box-shadow: none !important;
+}
+/* Customer's product cards: the price line was dark grey (#334155) on the dark card. */
+html[data-theme="dark"] .product-choice span { color: #f1f5f9; }
+html[data-theme="dark"] .product-choice small { color: #94a3b8; }
+html[data-theme="dark"] .product-choice.selected:not(#olv-none) { background: #13263d !important; border-color: #60a5fa !important; }
+/* Dark mode: brighter versions of colours that were too dim on the dark background. */
+html[data-theme="dark"] .btn-outline-primary:not(:hover):not(:active):not(.active) { color: #7cc4fa !important; border-color: #4a9fd8 !important; }
+html[data-theme="dark"] .btn-outline-secondary:not(:hover):not(:active):not(.active) { color: #cbd5e1 !important; border-color: #64748b !important; }
+html[data-theme="dark"] .btn-outline-danger:not(:hover):not(:active):not(.active) { color: #fca5a5 !important; border-color: #f87171 !important; }
+html[data-theme="dark"] .btn-outline-success:not(:hover):not(:active):not(.active) { color: #86efac !important; border-color: #4ade80 !important; }
+/* A switched-on toggle button (e.g. Calendar's "Delivery schedule") stays white on blue. */
+html[data-theme="dark"] .btn-check:checked + :is(.btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger):not(#olv-none) { color: #fff !important; background: #0a69a8 !important; border-color: #0a69a8 !important; }
+html[data-theme="dark"] .text-primary { color: #7cc4fa !important; }
+html[data-theme="dark"] .text-danger { color: #fca5a5 !important; }
+html[data-theme="dark"] .text-success { color: #86efac !important; }
+html[data-theme="dark"] .text-info { color: #67e8f9 !important; }
+html[data-theme="dark"] :is(.cal-name, .mini-cal-name) { color: #a3b3c6 !important; }
+html[data-theme="dark"] .user-kicker { color: #7cc4fa !important; }
+html[data-theme="dark"] .login-shell { background: rgba(15, 23, 42, 0.85); }
+html[data-theme="dark"] .records-note { background: #13263d; color: #cbd5e1; }
+html[data-theme="dark"] :is(.card-header, .card-header-custom, .modal-header, .modal-footer) {
+    background: #243247 !important;
+    color: #e2e8f0 !important;
+    border-color: #334155 !important;
+}
+html[data-theme="dark"] :is(table, .table) {
+    --bs-table-bg: #1e293b;
+    --bs-table-color: #e2e8f0;
+    --bs-table-striped-bg: #223047;
+    --bs-table-hover-bg: #26354c;
+    --bs-table-border-color: #334155;
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+html[data-theme="dark"] :is(th, table thead th, .table thead th, .table-primary > tr > th, thead.table-primary th) {
+    background: #243247 !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+html[data-theme="dark"] :is(td, tbody td, .table > :not(caption) > * > *) {
+    color: #e2e8f0;
+    border-color: #334155 !important;
+}
+html[data-theme="dark"] :is(tbody tr:hover, .table-hover tbody tr:hover) > * { background: #26354c !important; }
+html[data-theme="dark"] :is(tfoot td, .report-result tfoot td) { background: #243247 !important; }
+
+/* Text */
+html[data-theme="dark"] :is(h1, h2, h3, h4, h5, h6, .page-title, .dashboard-title, .modal-title,
+    .summary-label, label, legend, .form-label, .field-label, strong) { color: #e2e8f0; }
+html[data-theme="dark"] :is(.text-muted, .form-text, .form-hint, small, .refresh-text, .report-description,
+    .report-meta, .module-card small, .user-name-cell small) { color: #94a3b8 !important; }
+html[data-theme="dark"] p { color: inherit; }
+html[data-theme="dark"] a:not(.btn):not(.nav-item):not(.olv-topbar-btn):not(.module-card):not(.ad-panel a) { color: #7cc4fa; }
+html[data-theme="dark"] .module-card { color: #e2e8f0; }
+
+/* Form fields */
+html[data-theme="dark"] :is(input, select, textarea, .form-control, .form-select):not([type="checkbox"]):not([type="radio"]) {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+    border-color: #3b4a60 !important;
+}
+html[data-theme="dark"] :is(input, textarea)::placeholder { color: #64748b; }
+html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.85); }
+
+/* Light plain buttons used on some pages (customers, customer history) */
+html[data-theme="dark"] body.olv-page .container button:not(#btnAddCustomer):not(.btn):not(.olv-theme-toggle):not(.delivery-stat):not(.delivery-page-button),
+html[data-theme="dark"] .records-page button {
+    background: #243247;
+    color: #e2e8f0;
+    border-color: #3b4a60;
+}
+html[data-theme="dark"] :is(body.olv-page .container button, .records-page button):hover { background: #2e3f58; }
+html[data-theme="dark"] .btn-light:not(.olv-topbar-btn) { background: #243247; color: #e2e8f0; border-color: #3b4a60; }
+html[data-theme="dark"] :is(.movement-page-button, .delivery-page-button) { background: #1e293b; color: #e2e8f0; border-color: #3b4a60; }
+html[data-theme="dark"] :is(.movement-page-button, .delivery-page-button).active { background: #0a69a8; color: #fff; }
+
+/* Status colors that were pale backgrounds */
+html[data-theme="dark"] .status-out { background: #3b2f0b; color: #fcd34d; }
+html[data-theme="dark"] .status-cancelled { background: #3b1d1d; color: #fca5a5; }
+html[data-theme="dark"] .low-stock-item span { color: #fca5a5; }
+html[data-theme="dark"] .phone-number-warning { color: #fca5a5; }
+
+/* Dashboard sales chart */
+html[data-theme="dark"] #valueTrend,
+html[data-theme="dark"] #valueTrend svg { background: #1e293b !important; border-color: #334155 !important; }
+html[data-theme="dark"] #valueTrend text { fill: #cbd5e1; }
+html[data-theme="dark"] #valueTrend line { stroke: #2b3a50; }
+html[data-theme="dark"] #valueTrend rect[fill="none"] { stroke: #475569; }
+
+/* Delivery tracking window */
+html[data-theme="dark"] .track-steps li { color: #94a3b8; }
+html[data-theme="dark"] .track-steps li::before { background: #1e293b; border-color: #475569; }
+html[data-theme="dark"] .track-steps li.done { color: #86efac; }
+html[data-theme="dark"] .track-log { border-color: #334155; }
+html[data-theme="dark"] .track-log time,
+html[data-theme="dark"] .track-log small { color: #94a3b8; }
+
+/* Report pop-up */
+html[data-theme="dark"] dialog.report-display-card .report-header { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] :is(.report-letterhead, .report-signatures span) { border-color: #94a3b8; }
+html[data-theme="dark"] .report-letterhead strong { color: #e2e8f0; }
+html[data-theme="dark"] dialog.inventory-popup { background: transparent !important; }
+
+/* The floating switch in dark mode */
+html[data-theme="dark"] .olv-theme-toggle-floating { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+html[data-theme="dark"] .olv-theme-toggle-floating:hover { background: #26354c; }
+
+/* Fixes found while checking screenshots */
+html[data-theme="dark"] { background: #0b1220; }
+html[data-theme="dark"] .login-container { background: radial-gradient(circle at 15% 10%, rgba(11, 126, 199, 0.18), transparent 35%), #0b1220 !important; }
+html[data-theme="dark"] .hero-badge { background: rgba(124, 196, 250, 0.14) !important; color: #7cc4fa !important; }
+html[data-theme="dark"] body:not(.dashboard-page) :is(.page-header p, .text-muted),
+html[data-theme="dark"] :is(.dashboard-grid .card p, .card p, .records-page header p) { color: #a3b3c6 !important; }
+/* ---------- Top right: Dark/Light mode button and the signed-in name ---------- */
+.olv-user-menu { display: inline-flex; align-items: center; gap: 14px; }
+.olv-user-name { display: inline !important; font: 700 0.98rem/1.2 "Segoe UI", Arial, sans-serif; color: #1d2a38 !important; white-space: nowrap; }
+.olv-user-menu--on-dark .olv-user-name { color: #fff !important; }
+/* Minimal round icon button (moon in light mode, sun in dark mode). */
+.olv-theme-btn {
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 36px; height: 36px; min-height: 0; margin: 0; padding: 0;
+    border: 0; border-radius: 50%; background: transparent; color: #1d2a38;
+    font-size: 1.05rem; line-height: 1; cursor: pointer; transition: background .15s ease;
+}
+.olv-theme-btn:hover { background: rgba(15, 23, 42, 0.08); }
+.olv-theme-btn:focus-visible { outline: 3px solid rgba(11, 126, 199, 0.45); outline-offset: 2px; }
+.olv-user-menu--on-dark .olv-theme-btn { color: #fff; }
+.olv-user-menu--on-dark .olv-theme-btn:hover { background: rgba(255, 255, 255, 0.16); }
+.olv-user-menu--on-dark .olv-theme-btn:focus-visible { outline-color: #fff; }
+html[data-theme="dark"] .olv-user-menu:not(.olv-user-menu--on-dark) .olv-theme-btn { color: #e2e8f0; }
+html[data-theme="dark"] .olv-user-menu:not(.olv-user-menu--on-dark) .olv-user-name { color: #e2e8f0 !important; }
+/* Customer page bar: keep the button, name and Sign out together on the right. */
+.navbar .olv-user-menu { margin-left: auto; margin-right: 14px; }
+/* Pages with the sidebar have Logout at its bottom, so the top bar's own button is hidden. */
+body.olv-with-sidebar .olv-page-logout { display: none !important; }
+@media print { .olv-user-menu { display: none !important; } }
+html[data-theme="dark"] .report-letterhead span { color: #a3b3c6 !important; }
+
+html[data-theme="dark"] .btn-outline-secondary { color: #cbd5e1; border-color: #64748b; }
+html[data-theme="dark"] .btn-outline-secondary:hover { background: #334155; color: #fff; }
+
+/* ---------- Privacy notice (registration) and reminder (Add Customer) ---------- */
+.privacy-notice summary { cursor: pointer; font-weight: 600; font-size: .9rem; color: #0a5d8d; }
+.privacy-notice { padding: 10px 12px; border: 1px solid #d7e3ee; border-radius: 10px; background: #f8fbff; }
+.privacy-reminder { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #eff6ff; color: #1e3a5f; font-size: .85rem; line-height: 1.45; }
+html[data-theme="dark"] .privacy-notice { background: #13263d; border-color: #334155; }
+html[data-theme="dark"] .privacy-notice summary { color: #7cc4fa; }
+html[data-theme="dark"] .privacy-reminder { background: #13263d; color: #cbd5e1; }
+
+/* ---------- Status labels: one look everywhere ----------
+   Every status label in a list (Active, Available, Pending, Stock in, Delivered…) is the
+   same soft pill as on Orders: light colour, dark text of the same colour, a dot, the
+   same size and capital first letter, so it is easy to read in light and dark mode.
+   (Bootstrap's solid badges had white or dark text on strong colours, e.g. dark text on
+   green on Manage Accounts.) */
+:is(td, .olv-cards-on td) .badge,
+.olv-pill, .status-badge, .history-badge {
+    display: inline-flex !important; align-items: center; gap: 6px;
+    padding: 4px 11px !important; border-radius: 999px !important;
+    font: 700 0.78rem/1.3 "Segoe UI", Arial, sans-serif !important; letter-spacing: 0 !important;
+    white-space: nowrap; text-transform: capitalize;
+}
+td .badge::before, .history-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+td .badge > .bi { margin-right: -2px; }
+td .badge:is(.bg-success, .text-bg-success)  { background: #dcfce7 !important; color: #166534 !important; }
+td .badge:is(.bg-primary, .text-bg-primary)  { background: #dbeafe !important; color: #1d4ed8 !important; }
+td .badge:is(.bg-warning, .text-bg-warning)  { background: #fef3c7 !important; color: #92400e !important; }
+td .badge:is(.bg-danger, .text-bg-danger)    { background: #fee2e2 !important; color: #991b1b !important; }
+td .badge:is(.bg-info, .text-bg-info)        { background: #cffafe !important; color: #155e75 !important; }
+td .badge:is(.bg-secondary, .text-bg-secondary, .bg-dark, .text-bg-dark, .bg-light, .text-bg-light) { background: #e2e8f0 !important; color: #334155 !important; }
+html[data-theme="dark"] td .badge:is(.bg-success, .text-bg-success) { background: #0f3320 !important; color: #86efac !important; }
+html[data-theme="dark"] td .badge:is(.bg-primary, .text-bg-primary) { background: #172a4d !important; color: #93c5fd !important; }
+html[data-theme="dark"] td .badge:is(.bg-warning, .text-bg-warning) { background: #3b2f0b !important; color: #fcd34d !important; }
+html[data-theme="dark"] td .badge:is(.bg-danger, .text-bg-danger)   { background: #3b1d1d !important; color: #fca5a5 !important; }
+html[data-theme="dark"] td .badge:is(.bg-info, .text-bg-info)       { background: #0c3440 !important; color: #67e8f9 !important; }
+html[data-theme="dark"] td .badge:is(.bg-secondary, .text-bg-secondary, .bg-dark, .text-bg-dark, .bg-light, .text-bg-light) { background: #334155 !important; color: #e2e8f0 !important; }
+
+/* ---------- ✕ close button in the top-right corner of every pop-up window (theme.js) ----------
+   The holder takes no space and sticks to the top while the window scrolls. */
+.olv-x-wrap {
+    position: sticky; top: 0; z-index: 20; height: 0; margin: 0;
+    display: flex; justify-content: flex-end; pointer-events: none;
+}
+.olv-x {
+    pointer-events: auto; flex-shrink: 0;
+    width: 36px; height: 36px; margin: var(--olv-x-top, -12px) var(--olv-x-right, -12px) 0 0; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid #dbe3ef !important; border-radius: 50% !important;
+    background: #fff !important; color: #334155 !important; font-size: 1rem; line-height: 1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12); cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+.olv-x:hover { background: #fee2e2 !important; color: #b91c1c !important; border-color: #fecaca !important; }
+.olv-x:focus-visible { outline: 3px solid rgba(11, 126, 199, .45); outline-offset: 2px; }
+html[data-theme="dark"] .olv-x { background: #334155 !important; color: #e2e8f0 !important; border-color: #475569 !important; box-shadow: none; }
+html[data-theme="dark"] .olv-x:hover { background: #7f1d1d !important; color: #fff !important; border-color: #991b1b !important; }
+/* A window's older "×" button is replaced by the corner ✕ (which presses it). */
+.olv-x-replaced { display: none !important; }
+/* Keep window titles clear of the ✕. */
+dialog:has(> .olv-x-wrap) > :is(h1, h2, h3, h4, h5) ,
+dialog:has(> .olv-x-wrap) > form > :is(h1, h2, h3, h4, h5):first-child,
+.modal-content:has(> .olv-x-wrap) > :is(h1, h2, h3, h4, h5, .modal-header),
+dialog:has(> .olv-x-wrap) > :is(.report-header, .modal-header, .card-header-custom) { padding-right: 64px !important; }
+/* Centred windows (the message pop-up): equal room on both sides keeps the title centred
+   under its icon and above the OK button. */
+dialog.olv-popup > .olv-popup-title:not(#olv-none) { padding-left: 40px !important; padding-right: 40px !important; }
+
+/* ---------- Pop-up messages (olvPopup in theme.js; also used for alert()) ---------- */
+dialog.olv-popup {
+    width: min(420px, calc(100% - 32px)); margin: auto; padding: 28px 26px 22px;
+    border: 0 !important; border-radius: 18px; background: #fff !important; color: #1f2937;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28) !important; text-align: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+dialog.olv-popup::backdrop { background: rgba(15, 23, 42, 0.5); }
+dialog.olv-popup[open] { animation: olv-popup-in .16s ease-out; }
+@keyframes olv-popup-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { dialog.olv-popup[open] { animation: none; } }
+.olv-popup-icon { width: 56px; height: 56px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; font-size: 1.8rem; }
+.olv-popup-title { margin: 0 0 6px; font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+.olv-popup-text { margin: 0 0 20px; font-size: 1rem; line-height: 1.5; color: #334155; white-space: pre-line; overflow-wrap: anywhere; }
+.olv-popup-ok {
+    min-width: 120px; min-height: 42px; padding: 8px 22px; border: 0; border-radius: 11px;
+    font: 700 1rem/1.2 "Segoe UI", Arial, sans-serif; color: #fff; cursor: pointer;
+}
+.olv-popup-ok:focus-visible { outline: 3px solid rgba(11, 126, 199, .45); outline-offset: 3px; }
+dialog.olv-popup[data-type="danger"] .olv-popup-icon { background: #fee2e2; color: #dc2626; }
+dialog.olv-popup[data-type="danger"] .olv-popup-ok { background: #dc2626; }
+dialog.olv-popup[data-type="warning"] .olv-popup-icon { background: #fef3c7; color: #b45309; }
+dialog.olv-popup[data-type="warning"] .olv-popup-ok { background: #b45309; }
+dialog.olv-popup[data-type="info"] .olv-popup-icon { background: #dbeafe; color: #0a69a8; }
+dialog.olv-popup[data-type="info"] .olv-popup-ok { background: #0a69a8; }
+dialog.olv-popup[data-type="success"] .olv-popup-icon { background: #dcfce7; color: #15803d; }
+dialog.olv-popup[data-type="success"] .olv-popup-ok { background: #15803d; }
+.olv-popup-ok:hover { filter: brightness(.92); }
+/* Questions (olvConfirm / olvPrompt): Cancel and OK side by side, optional text box. */
+.olv-ask-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.olv-ask-cancel {
+    min-width: 120px; min-height: 42px; padding: 8px 22px; border-radius: 11px; cursor: pointer;
+    border: 1px solid #cbd5e1; background: #fff; color: #334155; font: 700 1rem/1.2 "Segoe UI", Arial, sans-serif;
+}
+.olv-ask-cancel:hover { background: #f1f5f9; }
+.olv-ask-cancel:focus-visible { outline: 3px solid rgba(11, 126, 199, .45); outline-offset: 3px; }
+.olv-ask-input { display: block; width: 100% !important; min-height: 44px; margin: -6px 0 18px; padding: 10px 14px !important; font-size: 1rem !important; text-align: left; }
+.olv-ask-input[hidden] { display: none !important; }
+html[data-theme="dark"] .olv-ask-cancel { background: #334155; color: #e2e8f0; border-color: #475569; }
+html[data-theme="dark"] .olv-ask-cancel:hover { background: #3b4a60; }
+html[data-theme="dark"] dialog.olv-popup { background: #1e293b !important; color: #e2e8f0; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6) !important; }
+html[data-theme="dark"] .olv-popup-title { color: #f1f5f9; }
+html[data-theme="dark"] .olv-popup-text { color: #cbd5e1; }
+html[data-theme="dark"] dialog.olv-popup[data-type="danger"] .olv-popup-icon { background: #3b1d1d; color: #fca5a5; }
+html[data-theme="dark"] dialog.olv-popup[data-type="warning"] .olv-popup-icon { background: #3b2f0b; color: #fcd34d; }
+html[data-theme="dark"] dialog.olv-popup[data-type="info"] .olv-popup-icon { background: #172a4d; color: #93c5fd; }
+html[data-theme="dark"] dialog.olv-popup[data-type="success"] .olv-popup-icon { background: #0f3320; color: #86efac; }
+
+/* ---------- Drop-downs: every one shows a ⌄ arrow ----------
+   Page styles that set "background: …" on text boxes (and again on focus) also wiped
+   Bootstrap's arrow, so many drop-downs looked like plain text boxes. This draws the same
+   arrow on every single-choice drop-down and on the searchable barangay picker.
+   (":not(#olv-none)" only raises the priority above those page styles.) */
+select:not([multiple]):not([size]):not(#olv-none),
+select[size="1"]:not(#olv-none),
+.select-search-button:not(#olv-none) {
+    -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 14px 10px !important;
+    padding-right: 2.4rem !important;
+    cursor: pointer;
+}
+html[data-theme="dark"] select:not([multiple]):not([size]):not(#olv-none),
+html[data-theme="dark"] select[size="1"]:not(#olv-none),
+html[data-theme="dark"] .select-search-button:not(#olv-none) {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+select:disabled:not(#olv-none) { cursor: not-allowed; opacity: .7; }
+
+/* ---------- Checkboxes and radio buttons ---------- */
+/* Page styles that make text boxes full-width and tall (pop-ups, portal cards) must not
+   stretch checkboxes and radio buttons into bars. */
+input.form-check-input[type="checkbox"], input.form-check-input[type="radio"] {
+    width: 1.1em !important; height: 1.1em !important; min-height: 0 !important; max-width: none !important;
+    padding: 0 !important; flex: 0 0 auto; display: inline-block !important;
+}
+input.form-check-input[type="radio"] { border-radius: 50% !important; }
+input.form-check-input[type="checkbox"] { border-radius: .25em !important; }
+/* The text-box style (style.css, "background: #fbfdff") also wiped Bootstrap's tick and
+   fill, so a ticked box looked empty. Put them back, with a clearer border. */
+body input.form-check-input { border: 1.5px solid #7b8fa6 !important; background-repeat: no-repeat !important; background-position: center !important; background-size: contain !important; }
+body input.form-check-input:checked {
+    background-color: #0b7ec7 !important;
+    border-color: #0b7ec7 !important;
+    background-image: var(--bs-form-check-bg-image) !important;
+}
+html[data-theme="dark"] body input.form-check-input:not(:checked) { border-color: #64748b !important; background-color: #0f172a !important; }
+
+/* ---------- Refill / new gallon choice (customer portal) ---------- */
+#containerChoice { border: 0; margin: 0; min-width: 0; }
+#containerChoice .form-check { display: flex; align-items: center; gap: 8px; padding-left: 0; margin-bottom: 4px; }
+#containerChoice .form-check-input { margin: 0 !important; float: none; }
+
+/* ---------- Activity Log filters ---------- */
+.activity-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+.activity-filters input { flex: 1 1 260px; }
+.activity-filters select { flex: 0 1 180px; }
+
+/* ---------- Database backups (dashboard, admin) ---------- */
+.backup-panel { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 18px; border: 1px solid #d7e3ee; border-left: 5px solid #16a34a; border-radius: 14px; background: #fff; }
+.backup-panel.d-none { display: none !important; }
+.backup-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+html[data-theme="dark"] .backup-panel { background: #1e293b; border-color: #334155; border-left-color: #4ade80; }
+
+/* ---------- Create portal login pop-up (Customers page) ---------- */
+.customer-login-dialog { width: min(460px, calc(100% - 32px)); border: 1px solid #cbd9e8; border-radius: 16px; padding: 22px; }
+.customer-login-dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
+.customer-login-dialog h2 { margin-top: 0; font-size: 1.3rem; }
+.customer-login-dialog label { display: block; margin: 12px 0 4px; font-weight: 600; }
+.customer-login-dialog input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+html[data-theme="dark"] .customer-login-dialog { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+
+/* ---------- Tables as cards when they do not fit (phones, tablets, small laptops) ----------
+   /js/table-cards.js labels the cells and adds .olv-cards-on only to a table wider than its box. */
+@media screen {
+    table.olv-cards-on { min-width: 0 !important; width: 100% !important; border: 0 !important; }
+    table.olv-cards-on thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    table.olv-cards-on, table.olv-cards-on :is(tbody, tfoot), table.olv-cards-on tr, table.olv-cards-on td { display: block; }
+    table.olv-cards-on :is(tbody, tfoot) tr {
+        margin: 0 0 12px; padding: 6px 14px;
+        border: 1px solid #d7e3ee; border-radius: 12px; background: #fff;
+        box-shadow: 0 6px 16px rgba(17, 45, 74, 0.06);
+    }
+    table.olv-cards-on :is(tbody, tfoot) td {
+        display: grid; grid-template-columns: minmax(84px, 36%) minmax(0, 1fr); gap: 10px; align-items: start;
+        min-width: 0 !important; max-width: none !important; width: auto !important;
+        padding: 8px 0 !important; border: 0 !important; border-top: 1px dashed #e2e8f0 !important;
+        background: transparent !important; box-shadow: none !important;
+        text-align: left !important; white-space: normal !important; overflow-wrap: anywhere;
+    }
+    table.olv-cards-on :is(tbody, tfoot) td:first-child { border-top: 0 !important; }
+    table.olv-cards-on :is(tbody, tfoot) td::before { content: attr(data-label); color: #5d6f82; font-size: .78rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; padding-top: 2px; }
+    /* Messages that span the table ("No deliveries found.") and unlabeled cells use the full width. */
+    table.olv-cards-on :is(tbody, tfoot) td[data-label=""] { display: block; }
+    table.olv-cards-on :is(tbody, tfoot) td[data-label=""]::before { content: none; }
+    table.olv-cards-on :is(tbody, tfoot) td > * { min-width: 0; justify-self: start; }
+    table.olv-cards-on .cell-sub, table.olv-cards-on .text-nowrap { white-space: normal !important; }
+    table.olv-cards-on .action-buttons, table.olv-cards-on td .btn-group { flex-wrap: wrap; }
+    .olv-cards-box { overflow: visible; border: 0; box-shadow: none; background: transparent; }
+    /* Folded cards (table data-collapse): only the name shows, with a ⌄ arrow; tap to drop down. */
+    table.olv-cards-on tbody tr.olv-fold { padding: 0 14px; }
+    table.olv-cards-on tbody tr.olv-fold:not(.is-open) > td:not(.olv-fold-head) { display: none !important; }
+    table.olv-cards-on tbody td.olv-fold-head {
+        display: flex !important; align-items: center; justify-content: space-between; gap: 12px;
+        min-height: 54px; padding: 12px 0 !important; cursor: pointer; font-size: 1.02rem; font-weight: 700;
+    }
+    table.olv-cards-on tbody td.olv-fold-head::before { content: none !important; }
+    table.olv-cards-on tbody td.olv-fold-head::after {
+        content: ""; flex-shrink: 0; width: 10px; height: 10px; margin-right: 4px;
+        border-right: 2px solid #5d6f82; border-bottom: 2px solid #5d6f82;
+        transform: translateY(-3px) rotate(45deg); transition: transform .15s ease;
+    }
+    table.olv-cards-on tbody tr.olv-fold.is-open td.olv-fold-head::after { transform: translateY(2px) rotate(-135deg); }
+    table.olv-cards-on tbody tr.olv-fold.is-open td.olv-fold-head { border-bottom: 1px solid #e2e8f0 !important; }
+    table.olv-cards-on tbody tr.olv-fold.is-open { padding-bottom: 6px; }
+    table.olv-cards-on tbody td.olv-fold-head:focus-visible { outline: 3px solid rgba(11, 126, 199, .45); outline-offset: 2px; border-radius: 8px; }
+    /* A card is one colour, also under the pointer or after a tap: the table's row highlight
+       coloured the card's edges and its cells differently (a white strip in dark mode). */
+    /* (":not(#olv-none)" only raises the priority above the dark-mode row-hover rules.) */
+    html body table.olv-cards-on :is(tbody, tfoot) tr > td:not(#olv-none) { background: transparent !important; box-shadow: none !important; }
+    html body table.olv-cards-on :is(tbody, tfoot) tr:hover { background: #fff !important; }
+    html body table.olv-cards-on tbody tr.olv-fold:not(.is-open):hover { background: #f6fbff !important; }
+    html[data-theme="dark"] body table.olv-cards-on :is(tbody, tfoot) tr:hover { background: #1e293b !important; }
+    html[data-theme="dark"] body table.olv-cards-on tbody tr.olv-fold:not(.is-open):hover { background: #243449 !important; }
+    @media (hover: none) {
+        html body table.olv-cards-on tbody tr.olv-fold:not(.is-open):hover { background: #fff !important; }
+        html[data-theme="dark"] body table.olv-cards-on tbody tr.olv-fold:not(.is-open):hover { background: #1e293b !important; }
+    }
+    html[data-theme="dark"] table.olv-cards-on tbody td.olv-fold-head::after { border-color: #a3b3c6; }
+    html[data-theme="dark"] table.olv-cards-on :is(tbody, tfoot) tr { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] table.olv-cards-on :is(tbody, tfoot) td { border-top-color: #334155 !important; }
+    html[data-theme="dark"] table.olv-cards-on :is(tbody, tfoot) td::before { color: #94a3b8; }
+}
+
+
+
+/* Small calendar for the customer's preferred delivery date. */
+.mini-cal { max-width: 340px; border: 1px solid #dbe3ef; border-radius: 12px; padding: 10px; background: #fff; }
+.mini-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.mini-cal-nav { border: 0; background: none; font-size: 1.3rem; line-height: 1; padding: 2px 10px; border-radius: 8px; color: #0b6fb3; }
+.mini-cal-nav:hover:not(:disabled) { background: #e0f2fe; }
+.mini-cal-nav:disabled { color: #cbd5e1; }
+.mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+.mini-cal-name { font-size: .72rem; font-weight: 700; color: #64748b; padding: 2px 0; }
+.mini-cal-day { border: 1px solid transparent; background: #f1f5f9; border-radius: 8px; padding: 6px 0; font-size: .9rem; color: #0f172a; }
+.mini-cal-day:hover:not(:disabled) { border-color: #7dd3fc; }
+.mini-cal-day.today { font-weight: 700; border-color: #93c5fd; }
+.mini-cal-day.selected { background: #0b6fb3; color: #fff; border-color: #0b6fb3; }
+.mini-cal-day:disabled { background: transparent; color: #cbd5e1; }
+html[data-theme="dark"] .mini-cal { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] .mini-cal-day { background: #0f172a; color: #e2e8f0; }
+html[data-theme="dark"] .mini-cal-day:disabled { background: transparent; color: #475569; }
+html[data-theme="dark"] .mini-cal-day.selected { background: #0369a1; color: #fff; }
+html[data-theme="dark"] .mini-cal-nav { color: #7dd3fc; }
+html[data-theme="dark"] .mini-cal-nav:disabled { color: #475569; }
+
+/* Calendar page (/calendar). */
+.cal-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cal-month { min-width: 160px; text-align: center; }
+.cal-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; padding: 16px; }
+@media (max-width: 900px) { .cal-layout { grid-template-columns: 1fr; } }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal-name { text-align: center; font-size: .75rem; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 4px 0; }
+.cal-cell { min-height: 84px; display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; text-align: left; color: #0f172a; }
+button.cal-cell:hover { border-color: #7dd3fc; background: #f0f9ff; }
+.cal-empty { background: transparent; border-color: transparent; }
+.cal-date { font-weight: 700; font-size: .9rem; }
+.cal-cell.is-today .cal-date { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 50%; background: #0b6fb3; color: #fff; }
+.cal-cell.is-selected { border: 2px solid #0b6fb3; background: #f0f9ff; }
+.cal-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+.cal-chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border-radius: 999px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+.cal-scheduled { background: #fef3c7; color: #92400e; }
+.cal-out { background: #ffedd5; color: #9a3412; }
+.cal-done { background: #dcfce7; color: #166534; }
+.cal-cancelled { background: #fee2e2; color: #991b1b; }
+.cal-order { background: #e0f2fe; color: #075985; }
+.cal-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cal-day { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; background: #f8fafc; max-height: 640px; overflow-y: auto; }
+.cal-sub { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin: 12px 0 6px; }
+.cal-sub:first-child { margin-top: 0; }
+.cal-items { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.cal-items li { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 10px; }
+.cal-items small { display: block; }
+@media (max-width: 600px) {
+    .cal-cell { min-height: 54px; padding: 4px; }
+    .cal-chip { padding: 0 5px; font-size: .68rem; }
+    .cal-name { font-size: .65rem; }
+}
+html[data-theme="dark"] .cal-cell:not(.cal-empty) { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+html[data-theme="dark"] button.cal-cell:hover, html[data-theme="dark"] .cal-cell.is-selected { background: #0c2a3f; border-color: #38bdf8; }
+html[data-theme="dark"] .cal-day { background: #0f172a; border-color: #334155; }
+html[data-theme="dark"] .cal-items li { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+html[data-theme="dark"] .cal-scheduled { background: #453411; color: #fcd34d; }
+html[data-theme="dark"] .cal-out { background: #431407; color: #fdba74; }
+html[data-theme="dark"] .cal-done { background: #14432a; color: #86efac; }
+html[data-theme="dark"] .cal-cancelled { background: #4c1d1d; color: #fca5a5; }
+html[data-theme="dark"] .cal-order { background: #0c3a55; color: #7dd3fc; }
+
+/* OLV logo (public/images/olv-logo.png) in the brand badges: a white tile shaped
+   to the logo, replacing the plain "OLV" letters. */
+.olv-sidebar-mark, .brand-mark, .brand-badge { width: 84px; height: 44px; padding: 4px 6px; background: #fff !important; border: 1px solid rgba(255, 255, 255, 0.6) !important; border-radius: 12px; flex-shrink: 0; overflow: hidden; }
+.brand-badge { width: 112px; height: 58px; border-radius: 16px; }
+.olv-sidebar-mark img, .brand-mark img, .brand-badge img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* Calendar view switch: only the chosen view is filled. */
+.cal-view .btn-check + .btn { background: transparent; color: #0b6fb3; border-color: #0b6fb3; }
+.cal-view .btn-check:checked + .btn { background: #0b6fb3; color: #fff; }
+html[data-theme="dark"] .cal-view .btn-check + .btn { color: #7dd3fc; border-color: #38bdf8; }
+html[data-theme="dark"] .cal-view .btn-check:checked + .btn { background: #0369a1; color: #fff; }
+/* "Out / dropped off" in indigo, so it is not confused with "Scheduled" (amber). */
+.cal-out { background: #e0e7ff !important; color: #3730a3 !important; }
+html[data-theme="dark"] .cal-out { background: #312e81 !important; color: #c7d2fe !important; }
+
+/* Daily sales graph: drag to move, overview strip, draw-in animation. */
+.chart-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chart-range { font-size: .85rem; color: #475569; font-weight: 600; }
+.chart-zoom { display: flex; gap: 6px; }
+.chart-scroll { overflow: hidden !important; }
+.sales-chart { width: 100%; display: block; background: #fff; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.sales-chart.is-dragging { cursor: grabbing; }
+.sales-chart.is-new .sales-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sales-draw 1.1s ease-out forwards; }
+.sales-chart.is-new .sales-area { opacity: 0; animation: sales-fade .9s .35s ease-out forwards; }
+.sales-chart.is-new .sales-point { opacity: 0; animation: sales-fade .3s ease-out forwards; }
+@keyframes sales-draw { to { stroke-dashoffset: 0; } }
+@keyframes sales-fade { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sales-chart.is-new .sales-line, .sales-chart.is-new .sales-area, .sales-chart.is-new .sales-point { animation: none; opacity: 1; stroke-dashoffset: 0; } }
+.chart-overview { margin-top: 8px; height: 56px; border: 1px solid #d5d9dd; border-radius: 8px; background: #f8fafc; cursor: grab; touch-action: none; overflow: hidden; }
+.chart-overview:active { cursor: grabbing; }
+.chart-overview svg { width: 100%; height: 100%; display: block; }
+.overview-window { fill: rgba(11, 126, 199, .14); stroke: #0b7ec7; stroke-width: 2; vector-effect: non-scaling-stroke; }
+html[data-theme="dark"] .sales-chart { background: #0f172a; }
+html[data-theme="dark"] .chart-overview { background: #0f172a; border-color: #334155; }
+html[data-theme="dark"] .chart-range { color: #a3b3c6; }
+
+/* Touch: the page scrolls up and down; sideways drags move the graph. */
+.chart-scroll .sales-chart { touch-action: pan-y; }
+
+
+/* Dashboard: low stock rows and newly arrived inventory transactions. */
+.stock-low-row td { background: #fef2f2 !important; }
+.transaction-new td { animation: transaction-flash 3s ease-out; }
+@keyframes transaction-flash { from { background: #dbeafe; } to { background: transparent; } }
+html[data-theme="dark"] .stock-low-row td { background: #3b1414 !important; }
+@media (prefers-reduced-motion: reduce) { .transaction-new td { animation: none; background: #dbeafe; } }
+
+/* Orders page: keep the address readable (it wraps instead of squeezing). */
+.order-address { min-width: 160px; max-width: 240px; white-space: normal; }
+
+
+/* Orders page: items get enough room to read on one or two lines. */
+#ordersTable:not(.olv-cards-on) td:nth-child(3) { min-width: 130px; }
+
+
+/* Orders page: Approve beside Cancel, and the "Approved" mark. */
+.order-actions .order-buttons { display: flex; gap: 4px; flex-wrap: nowrap; margin-top: 4px; }
+.order-actions .order-buttons .ms-1 { margin-left: 0 !important; }
+.order-approved { display: block; color: #15803d; font-weight: 600; font-size: .85rem; margin-top: 2px; }
+html[data-theme="dark"] .order-approved { color: #86efac; }
+.order-actions .btn { padding: 3px 8px !important; font-size: .8rem !important; line-height: 1.4 !important; border-radius: 8px !important; font-weight: 600; }
+.order-actions [data-approve-order] { background: #16a34a !important; border: 1px solid #16a34a !important; color: #fff !important; box-shadow: none !important; }
+.order-actions [data-approve-order]:hover { background: #15803d !important; }
+.order-actions [data-cancel-order] { background: #dc2626 !important; border: 1px solid #dc2626 !important; color: #fff !important; box-shadow: none !important; }
+.order-actions [data-cancel-order]:hover { background: #b91c1c !important; border-color: #b91c1c !important; }
+html[data-theme="dark"] .order-actions [data-cancel-order] { background: #dc2626 !important; color: #fff !important; border-color: #dc2626 !important; }
+
+.order-actions .btn-success:not([data-approve-order]) { color: #fff !important; }
+
+
+/* Cards: everything in a cell stays in the value column (second lines, phone numbers,
+   notes), so nothing drops under the label on the left. */
+@media screen {
+    table.olv-cards-on :is(tbody, tfoot) td:not([data-label=""]) > * { grid-column: 2; }
+}
+
+/* Searchable drop-down (public/js/select-search.js): the barangay list with a search box. */
+.select-search-native { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0; pointer-events: none; overflow: hidden; }
+.select-search { position: relative; }
+.select-search-button { text-align: left; background-color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.select-search-button.is-placeholder { color: #6b7c8f; }
+.select-search-panel { position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px); padding: 8px; background: #fff; border: 1px solid #cbd9e8; border-radius: 12px; box-shadow: 0 12px 28px rgba(15, 23, 42, .16); }
+.select-search-list { list-style: none; margin: 6px 0 0; padding: 0; max-height: 240px; overflow-y: auto; }
+.select-search-list [role=option] { padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: .95rem; }
+.select-search-list [role=option]:hover, .select-search-list .is-active { background: #e0f2fe; color: #075985; }
+.select-search-list [aria-selected="true"] { font-weight: 700; }
+.select-search-empty { padding: 8px 10px; color: #6b7c8f; font-size: .9rem; }
+html[data-theme="dark"] .select-search-button { background-color: #0f172a; color: #e2e8f0; }
+html[data-theme="dark"] .select-search-panel { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] .select-search-list [role=option]:hover, html[data-theme="dark"] .select-search-list .is-active { background: #0c3a55; color: #7dd3fc; }
+
+/* Customer portal: Track delivery and Cancel order side by side. */
+.order-main-buttons { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.order-main-buttons .btn { white-space: nowrap; }
+
+
+/* Recently Deleted page: removed products (kept until restored or deleted permanently) */
+.deleted-search { max-width: 280px; }
+.removed-list { display: flex; flex-direction: column; gap: 10px; }
+.removed-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+.removed-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.removed-name { color: #64748b; text-decoration: line-through; }
+.removed-meta { color: #64748b; font-size: .8rem; }
+.removed-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+html[data-theme="dark"] .removed-item { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] .removed-name, html[data-theme="dark"] .removed-meta { color: #94a3b8; }
+@media (max-width: 600px) {
+    .removed-item { grid-template-columns: minmax(0, 1fr) auto; }
+    .removed-actions { grid-column: 1 / -1; justify-content: flex-start; }
+}
+
+/* Inventory: gear menu on each product (Remove) */
+.product-menu { position: fixed; z-index: 1080; min-width: 170px; padding: 6px; border: 1px solid #d7e3ee; border-radius: 12px; background: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, .18); display: flex; flex-direction: column; gap: 2px; }
+.product-menu[hidden] { display: none; }
+.product-menu-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: #10263f; font-weight: 600; font-size: .9rem; text-align: left; }
+.product-menu-item:hover, .product-menu-item:focus-visible { background: #eef6fd; outline: none; }
+.product-menu-item.is-danger { color: #b91c1c; }
+.product-menu-item.is-danger:hover, .product-menu-item.is-danger:focus-visible { background: #fee2e2; }
+html[data-theme="dark"] .product-menu { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] .product-menu-item { color: #e2e8f0; }
+html[data-theme="dark"] .product-menu-item:hover, html[data-theme="dark"] .product-menu-item:focus-visible { background: #13263d; }
+html[data-theme="dark"] .product-menu-item.is-danger { color: #fca5a5; }
+html[data-theme="dark"] .product-menu-item.is-danger:hover { background: #450a0a; }
+
+/* ---------- Phone side menu (mobile-nav.js), for every signed-in user ---------- */
+.olv-mnav-toggle, .olv-mnav, .olv-mnav-backdrop { display: none; }
+@media (max-width: 900px) {
+    .olv-mnav-toggle {
+        display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+        width: 44px; height: 44px; margin: 0; padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 12px;
+        background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer;
+    }
+    .olv-mnav-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+    .topbar-glass .olv-mnav-toggle { border-color: #cbd9e8; background: #fff; color: #0a3d5e; }
+    .topbar-glass .olv-mnav-toggle:focus-visible { outline-color: #0b7ec7; }
+
+    /* The menu holds Dashboard, Dark mode and Sign out, so the bar keeps only ☰ and the name. */
+    .olv-has-mnav .olv-topbar, .olv-has-mnav .topbar-glass, .olv-has-mnav > nav.navbar .container {
+        flex-wrap: nowrap; justify-content: flex-start; gap: 12px;
+    }
+    .olv-has-mnav .olv-user-menu, .olv-has-mnav .olv-topbar-back, .olv-has-mnav .topbar-actions, .olv-has-mnav .olv-page-logout { display: none !important; }
+    .olv-has-mnav .olv-topbar-brand, .olv-has-mnav .topbar-title, .olv-has-mnav > nav.navbar .navbar-brand { min-width: 0; margin: 0; white-space: normal; line-height: 1.25; }
+
+    .olv-mnav-backdrop {
+        display: block; position: fixed; inset: 0; z-index: 1080;
+        background: rgba(15, 23, 42, 0.5); opacity: 0; transition: opacity 0.2s ease;
+    }
+    .olv-mnav {
+        display: flex; flex-direction: column; gap: 14px;
+        position: fixed; top: 0; bottom: 0; left: 0; z-index: 1081;
+        width: min(300px, 85vw); padding: 16px 14px; overflow-y: auto;
+        background: linear-gradient(180deg, rgba(10, 61, 94, 0.99), rgba(12, 83, 126, 0.98));
+        box-shadow: 12px 0 30px rgba(10, 30, 42, 0.3); color: #fff;
+        font-family: "Segoe UI", Arial, sans-serif;
+        transform: translateX(-105%); transition: transform 0.2s ease;
+    }
+    .olv-mnav[hidden], .olv-mnav-backdrop[hidden] { display: none; }
+    body.olv-mnav-open { overflow: hidden; }
+    body.olv-mnav-open .olv-mnav { transform: none; }
+    body.olv-mnav-open .olv-mnav-backdrop { opacity: 1; }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+    .olv-mnav, .olv-mnav-backdrop { transition: none; }
+}
+.olv-mnav-head { display: flex; align-items: center; gap: 10px; padding: 2px 2px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.olv-mnav-head .olv-sidebar-mark { width: 64px; height: 38px; }
+.olv-mnav-brand { flex: 1; min-width: 0; }
+.olv-mnav-brand strong { display: block; font-size: 1.05rem; }
+.olv-mnav-brand small { display: block; color: rgba(255, 255, 255, 0.72); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.olv-mnav-close {
+    width: 40px; height: 40px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; background: transparent; color: #fff; font-size: 1.05rem;
+}
+.olv-mnav-close:focus-visible, .olv-mnav-item:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.8); outline-offset: 2px; }
+.olv-mnav-links { display: flex; flex-direction: column; gap: 4px; }
+.olv-mnav-item {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 46px; padding: 10px 12px;
+    border: 0; border-radius: 12px; background: transparent; text-align: left;
+    color: rgba(255, 255, 255, 0.88) !important; font: 600 1rem/1.2 "Segoe UI", Arial, sans-serif; text-decoration: none; cursor: pointer;
+}
+.olv-mnav-item:hover, .olv-mnav-item.active { background: rgba(255, 255, 255, 0.12); color: #fff !important; }
+.olv-mnav-item.active { box-shadow: inset 3px 0 0 #7dd3fc; }
+.olv-mnav-item .nav-icon { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 9px; background: rgba(255, 255, 255, 0.1); }
+.olv-mnav-foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.olv-mnav-user { padding: 4px 12px 8px; }
+.olv-mnav-user strong { display: block; overflow-wrap: anywhere; }
+.olv-mnav-user small { color: rgba(255, 255, 255, 0.72); text-transform: capitalize; }
+.olv-mnav-signout { color: #fecaca !important; }
+#placeOrder, #deliveryDetails, #myOrders { scroll-margin-top: 16px; }

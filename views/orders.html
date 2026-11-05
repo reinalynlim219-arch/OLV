@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+
+    <title>
+        Orders
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/pages.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="container">
+
+        <div class="olv-page-head">
+
+            <div>
+
+                <h1>
+                    Orders
+                </h1>
+
+                <p>
+                    View customer orders and inventory stock-out. New orders
+                    are submitted by customers through the customer portal.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Summary cards -->
+        <div class="olv-stats">
+            <div class="olv-stat is-amber"><span class="olv-stat-label">Pending orders</span><span id="ordersPending" class="olv-stat-value">0</span></div>
+            <div class="olv-stat is-green"><span class="olv-stat-label">Completed orders</span><span id="ordersCompleted" class="olv-stat-value">0</span></div>
+            <div class="olv-stat is-blue"><span class="olv-stat-label">Total sales (completed)</span><span id="ordersSales" class="olv-stat-value">₱0.00</span></div>
+            <div class="olv-stat is-slate"><span class="olv-stat-label">All orders</span><span id="ordersTotal" class="olv-stat-value">0</span></div>
+        </div>
+
+        <!-- ==========================================
+             ORDERS TABLE
+        =========================================== -->
+
+        <div class="olv-panel">
+        <div class="olv-panel-head">
+            <div>
+                <h2 class="olv-panel-title">Customer orders</h2>
+                <p class="olv-panel-sub">Newest orders first. Stock is deducted when an order is completed.</p>
+            </div>
+        </div>
+        <div class="table-container">
+
+            <!-- data-collapse: as cards (laptops, phones) each order shows only the
+                 customer's name; tapping it drops down the details (table-cards.js). -->
+            <table
+                class="table"
+                id="ordersTable"
+                data-collapse
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Order Date
+                        </th>
+
+                        <th>
+                            Items
+                        </th>
+
+                        <th>
+                            Schedule
+                        </th>
+
+                        <th>
+                            Address
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Delivery
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody
+                    id="orderTableBody"
+                >
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="text-center"
+                        >
+                            Loading orders...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div id="ordersPagination" class="movement-pagination olv-panel-foot" aria-label="Orders pages"></div>
+        </div>
+</main>
+
+    <!-- ==========================================
+         NEW ORDER MODAL
+    =========================================== -->
+
+    <div
+        id="orderModal"
+        class="modal"
+    >
+
+        <div
+            class="modal-content"
+        >
+
+            <!-- ==========================================
+                 MODAL HEADER
+            =========================================== -->
+
+            <div
+                class="modal-header"
+            >
+
+                <h2>
+                    Create New Order
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeOrderModal"
+                    class="close"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+            <!-- ==========================================
+                 CUSTOMER
+            =========================================== -->
+
+            <div class="form-group">
+
+                <label
+                    for="orderCustomer"
+                >
+                    Customer
+                </label>
+
+                <select
+                    id="orderCustomer"
+                    class="form-control"
+                >
+
+                    <option value="">
+                        Select Customer
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- ==========================================
+                 PRODUCT
+            =========================================== -->
+
+            <div class="form-group">
+
+                <label
+                    for="orderProduct"
+                >
+                    Product
+                </label>
+
+                <select
+                    id="orderProduct"
+                    class="form-control"
+                >
+
+                    <option value="">
+                        Select Product
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- ==========================================
+                 QUANTITY
+            =========================================== -->
+
+            <div class="form-group">
+
+                <label
+                    for="orderQuantity"
+                >
+                    Quantity
+                </label>
+
+                <input
+                    type="number"
+                    id="orderQuantity"
+                    class="form-control"
+                    value="1"
+                    min="1"
+                >
+
+            </div>
+
+            <!-- ==========================================
+                 MODAL BUTTONS
+            =========================================== -->
+
+            <div
+                class="modal-footer modal-footer-custom"
+            >
+
+                <!-- CANCEL -->
+
+                <button
+                    type="button"
+                    id="cancelOrder"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </button>
+
+                <!-- SAVE ORDER -->
+
+                <button
+                    type="button"
+                    id="saveOrder"
+                    class="btn btn-primary"
+                >
+                    Save Order
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+         ORDERS JAVASCRIPT
+    =========================================== -->
+
+    <script
+        src="/js/orders.js"
+    ></script>
+</body>
+
+</html>

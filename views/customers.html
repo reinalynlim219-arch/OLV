@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Customer Information</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/customers.css">
+<script src="/js/phone-validation.js" defer></script>
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/pages.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<div class="container">
+<div class="olv-page-head">
+    <div>
+        <h1>Customer Information</h1>
+        <p>Manage customer records and delivery locations.</p>
+    </div>
+</div>
+
+<!-- Summary cards -->
+<div class="olv-stats">
+    <div class="olv-stat is-blue"><span class="olv-stat-label">Total customers</span><span id="customersTotal" class="olv-stat-value">0</span></div>
+    <div class="olv-stat is-green"><span class="olv-stat-label">Active</span><span id="customersActive" class="olv-stat-value">0</span></div>
+    <div class="olv-stat is-slate"><span class="olv-stat-label">Archived</span><span id="customersArchived" class="olv-stat-value">0</span></div>
+</div>
+
+<div class="olv-panel">
+<div class="olv-panel-head">
+    <div>
+        <h2 class="olv-panel-title">Customers</h2>
+        <p id="customerCount" class="olv-panel-sub">Loading customers...</p>
+    </div>
+    <div class="olv-panel-tools">
+        <input type="search" id="searchCustomer" placeholder="Search name, contact, or address" aria-label="Search customers">
+        <select id="customerStatusFilter" aria-label="Customer status filter">
+            <option value="active">Active customers</option>
+            <option value="archived">Archived customers</option>
+            <option value="all">All customers</option>
+        </select>
+        <button id="btnAddCustomer" type="button">+ Add Customer</button>
+    </div>
+</div>
+<div class="table-container">
+<table id="customerTable">
+<thead><tr>
+    <th>Customer</th><th>Contact</th><th>Delivery address</th><th>Type</th><th>Status</th><th>Actions</th>
+</tr></thead>
+<tbody id="customerTableBody"></tbody>
+</table>
+</div>
+</div>
+
+<div id="customerModal" class="modal">
+<div class="modal-content customer-modal-content">
+    <h2 id="modalTitle">Add Customer</h2>
+    <input type="hidden" id="customerId">
+
+    <div class="form-group"><label for="customerName">Customer Name</label><input type="text" id="customerName" placeholder="Enter customer name" required maxlength="80"></div>
+    <div class="form-group"><label for="contactNumber">Contact Number</label><input data-phone-number type="text" id="contactNumber" placeholder="09XXXXXXXXX" inputmode="tel" maxlength="11" required><small>Type the 10 digits after +63, for example 9171234567.</small></div>
+
+    <div class="form-row">
+        <div class="form-group"><label for="city">City / Municipality</label><select id="city"><option value="Legazpi City">Legazpi City</option><option value="Daraga">Daraga</option></select></div>
+        <div class="form-group"><label for="barangay">Barangay</label><select id="barangay" required></select></div>
+    </div>
+    <div class="form-row">
+        <div class="form-group"><label for="zone">Zone</label><input type="text" id="zone" placeholder="e.g. 5"></div>
+        <div class="form-group"><label for="street">Street</label><input type="text" id="street" required></div>
+    </div>
+    <div class="form-row">
+        <div class="form-group"><label for="houseNumber">House / Lot Number</label><input type="text" id="houseNumber" required></div>
+        <div class="form-group"><label for="landmark">Landmark</label><input type="text" id="landmark" placeholder="Nearby store or building"></div>
+    </div>
+
+    <div class="form-group"><label for="customerType">Customer Type</label><select id="customerType"><option value="Regular">Regular</option><option value="Walk-in">Walk-in</option><option value="Business">Business</option></select></div>
+
+    <p class="privacy-reminder" id="privacyReminder">Data Privacy Act (RA 10173): before saving, tell the customer that the station keeps their name, contact number, and address only to take and deliver their orders, and ask for their permission.</p>
+    <div class="modal-buttons">
+        <button id="saveCustomer" type="button">Save</button>
+        <button id="cancelCustomer" type="button">Cancel</button>
+    </div>
+</div>
+</div>
+
+<!-- Portal login for a customer without email (made by staff at the counter). -->
+<dialog id="customerLoginDialog" class="customer-login-dialog" aria-labelledby="customerLoginTitle">
+    <form id="customerLoginForm">
+        <h2 id="customerLoginTitle">Create portal login</h2>
+        <p id="customerLoginFor" class="text-muted"></p>
+        <p class="small">For customers without email. Give them the username and password; they can then order and track deliveries, and should change the password in Account settings.</p>
+        <label for="customerLoginUsername">Username</label>
+        <input id="customerLoginUsername" type="text" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]{3,32}" autocomplete="off" required>
+        <label for="customerLoginPassword">Password</label>
+        <input id="customerLoginPassword" type="text" minlength="8" maxlength="64" autocomplete="off" required aria-describedby="customerLoginHelp">
+        <p id="customerLoginHelp" class="small text-muted">At least 8 characters with an uppercase letter, a lowercase letter, a number, and a symbol. <button type="button" id="customerLoginMakePassword" class="btn btn-link btn-sm p-0 align-baseline">Make a password</button></p>
+        <p id="customerLoginMessage" class="small" role="status"></p>
+        <div class="modal-buttons">
+            <button type="submit">Create login</button>
+            <button type="button" id="customerLoginCancel">Cancel</button>
+        </div>
+    </form>
+</dialog>
+<script src="/js/barangays.js"></script>
+<script src="/js/customers.js"></script>
+</body>
+</html>

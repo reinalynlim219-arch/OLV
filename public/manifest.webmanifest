@@ -1,0 +1,15 @@
+{
+  "name": "OLV Water Operations Suite",
+  "short_name": "OLV Operations",
+  "description": "Offline-ready water refilling station inventory and operations management.",
+  "start_url": "/login",
+  "display": "standalone",
+  "background_color": "#edf5fd",
+  "theme_color": "#0a5d8d",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

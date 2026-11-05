@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+    <script src="/js/pwa.js" defer></script>
+
+    <title>
+        Inventory Movement History - OLV Water Refilling Station
+    </title>
+
+    <link
+        href="/vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+
+    <!-- ========================================== -->
+    <!-- NAVBAR -->
+    <!-- ========================================== -->
+
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================== -->
+
+    <main class="container mt-4">
+
+        <!-- PAGE HEADER -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h1>
+                    Inventory Movement History
+                </h1>
+
+                <p class="text-muted">
+
+                    View all Stock In and Out of Stock movements.
+
+                </p>
+
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap align-items-center">
+
+                <span class="text-muted small me-2">Live updates enabled</span>
+
+                <a
+                    href="/inventory"
+                    class="btn btn-outline-primary"
+                >
+                    Inventory
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- FILTERS -->
+        <!-- ========================================== -->
+
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <!-- SEARCH -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label
+                            for="searchInput"
+                            class="form-label"
+                        >
+                            Search Product
+                        </label>
+
+                        <input
+                            type="text"
+                            id="searchInput"
+                            class="form-control"
+                            placeholder="Search product name..."
+                            oninput="filterMovements()"
+                        >
+
+                    </div>
+
+                    <!-- MOVEMENT TYPE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label
+                            for="movementFilter"
+                            class="form-label"
+                        >
+                            Movement Type
+                        </label>
+
+                        <select
+                            id="movementFilter"
+                            class="form-select"
+                            onchange="filterMovements()"
+                        >
+
+                            <option value="all">
+                                All Movements
+                            </option>
+
+                            <option value="stock_in">
+                                Stock In
+                            </option>
+
+                            <option value="stock_out">
+                                Out of Stock
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SUMMARY -->
+        <!-- ========================================== -->
+
+        <div class="row mb-4">
+
+            <!-- TOTAL MOVEMENTS -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <h6 class="text-muted">
+                            Total Movements
+                        </h6>
+
+                        <h3 id="totalMovements">
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STOCK IN -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <h6 class="text-muted">
+                            Stock In
+                        </h6>
+
+                        <h3
+                            id="totalStockIn"
+                            class="text-success"
+                        >
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STOCK OUT -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <h6 class="text-muted">
+                            Out of Stock
+                        </h6>
+
+                        <h3
+                            id="totalStockOut"
+                            class="text-danger"
+                        >
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MOVEMENT TABLE -->
+        <!-- ========================================== -->
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-bordered table-striped"
+                    >
+
+                        <thead class="table-primary">
+
+                            <tr>
+
+                                <th>
+                                    Date / Time
+                                </th>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Movement
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Reason
+                                </th>
+
+
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="movementTable">
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="text-center"
+                                >
+                                    Loading movement history...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div id="movementPagination" class="movement-pagination" aria-label="Inventory movement history pages"></div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================== -->
+
+    <script>
+
+        // ==========================================
+        // GLOBAL DATA
+        // ==========================================
+
+        let movementData = [];
+        let currentMovementPage = 1;
+        const movementPageSize = 10;
+
+        // ==========================================
+        // LOAD MOVEMENTS
+        // ==========================================
+
+        async function loadMovements() {
+
+            const table =
+                document.getElementById(
+                    "movementTable"
+                );
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center"
+                    >
+                        Loading movement history...
+                    </td>
+
+                </tr>
+
+            `;
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/inventory/movements"
+                    );
+
+                // ==================================
+                // LOGIN CHECK
+                // ==================================
+
+                if (!response.ok) {
+
+                    if (
+                        response.status === 401 ||
+                        response.status === 403
+                    ) {
+
+                        window.location.href = "/login";
+
+                        return;
+
+                    }
+
+                    throw new Error(
+                        "Unable to load movement history."
+                    );
+
+                }
+
+                movementData =
+                    await response.json();
+
+                updateSummary();
+
+                // The list reloads every 5 seconds: keep the chosen page, search and filter.
+                displayMovements(
+                    getFilteredMovements()
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="text-center text-danger"
+                        >
+                            Unable to load movement history.
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+        // ==========================================
+        // DISPLAY MOVEMENTS
+        // ==========================================
+
+        function displayMovements(
+            movements
+        ) {
+
+            const table =
+                document.getElementById(
+                    "movementTable"
+                );
+
+            table.innerHTML = "";
+
+            if (
+                !movements ||
+                movements.length === 0
+            ) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="text-center"
+                        >
+                            No inventory movements found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                renderMovementPagination(0);
+
+                return;
+
+            }
+
+            const totalPages = Math.ceil(movements.length / movementPageSize);
+            currentMovementPage = Math.max(1, Math.min(currentMovementPage, totalPages));
+            const startIndex = (currentMovementPage - 1) * movementPageSize;
+            const pageMovements = movements.slice(startIndex, startIndex + movementPageSize);
+
+            pageMovements.forEach(
+                movement => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    // ==================================
+                    // MOVEMENT TYPE
+                    // ==================================
+
+                    let movementLabel =
+                        "Unknown";
+
+                    let movementClass =
+                        "text-secondary";
+
+                    if (
+                        movement.movement_type ===
+                        "stock_in"
+                    ) {
+
+                        movementLabel =
+                            '<span class="badge bg-success">Stock In</span>';
+
+                        movementClass =
+                            "";
+
+                    }
+
+                    if (
+                        movement.movement_type ===
+                        "stock_out"
+                    ) {
+
+                        movementLabel =
+                            '<span class="badge bg-danger">Out of Stock</span>';
+
+                        movementClass =
+                            "";
+
+                    }
+
+                    // ==================================
+                    // DATE
+                    // ==================================
+
+                    let formattedDate =
+                        "N/A";
+
+                    if (
+                        movement.created_at
+                    ) {
+
+                        // The database stores times in UTC; show them in Philippine time.
+                        const date =
+                            new Date(
+                                String(movement.created_at).replace(" ", "T") +
+                                (/[zZ]|[+-]\d\d:?\d\d$/.test(movement.created_at) ? "" : "Z")
+                            );
+
+                        if (
+                            !isNaN(
+                                date.getTime()
+                            )
+                        ) {
+
+                            formattedDate =
+                                date.toLocaleString("en-PH", {
+                                    timeZone: "Asia/Manila",
+                                    dateStyle: "medium",
+                                    timeStyle: "short"
+                                });
+
+                        } else {
+
+                            formattedDate =
+                                movement.created_at;
+
+                        }
+
+                    }
+
+                    // ==================================
+                    // REASON
+                    // ==================================
+
+                    const reason =
+                        movement.reason ||
+                        "No reason provided";
+
+                    // ==================================
+                    // ROW
+                    // ==================================
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${formattedDate}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                movement.product_name ||
+                                "Unknown Product"
+                            )}
+                        </td>
+
+                        <td class="${movementClass}">
+                            ${movementLabel}
+                        </td>
+
+                        <td>
+                            ${Number(
+                                movement.quantity || 0
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                reason
+                            )}
+                        </td>
+
+
+                    `;
+
+                    table.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+            renderMovementPagination(movements.length);
+
+        }
+
+        function renderMovementPagination(totalItems) {
+            const pagination = document.getElementById("movementPagination");
+            if (!pagination) return;
+
+            const totalPages = Math.ceil(totalItems / movementPageSize);
+            if (totalPages <= 1) {
+                pagination.innerHTML = "";
+                return;
+            }
+
+            let controls = `<button type="button" class="movement-page-button" ${currentMovementPage === 1 ? "disabled" : ""} onclick="changeMovementPage(${currentMovementPage - 1})" aria-label="Previous page">&lsaquo;</button>`;
+
+            for (let page = 1; page <= totalPages; page += 1) {
+                controls += `<button type="button" class="movement-page-button ${page === currentMovementPage ? "active" : ""}" onclick="changeMovementPage(${page})" aria-label="Page ${page}" ${page === currentMovementPage ? "aria-current=\"page\"" : ""}>${page}</button>`;
+            }
+
+            controls += `<button type="button" class="movement-page-button" ${currentMovementPage === totalPages ? "disabled" : ""} onclick="changeMovementPage(${currentMovementPage + 1})" aria-label="Next page">&rsaquo;</button>`;
+            pagination.innerHTML = controls;
+        }
+
+        function changeMovementPage(page) {
+            const filtered = getFilteredMovements();
+            const totalPages = Math.max(1, Math.ceil(filtered.length / movementPageSize));
+            currentMovementPage = Math.max(1, Math.min(page, totalPages));
+            displayMovements(filtered);
+        }
+
+        // ==========================================
+        // UPDATE SUMMARY
+        // ==========================================
+
+        function updateSummary() {
+
+            let totalMovements =
+                movementData.length;
+
+            let totalStockIn = 0;
+
+            let totalStockOut = 0;
+
+            movementData.forEach(
+                movement => {
+
+                    const quantity =
+                        Number(
+                            movement.quantity || 0
+                        );
+
+                    if (
+                        movement.movement_type ===
+                        "stock_in"
+                    ) {
+
+                        totalStockIn +=
+                            quantity;
+
+                    }
+
+                    if (
+                        movement.movement_type ===
+                        "stock_out"
+                    ) {
+
+                        totalStockOut +=
+                            quantity;
+
+                    }
+
+                }
+            );
+
+            document.getElementById(
+                "totalMovements"
+            ).textContent =
+                totalMovements;
+
+            document.getElementById(
+                "totalStockIn"
+            ).textContent =
+                totalStockIn;
+
+            document.getElementById(
+                "totalStockOut"
+            ).textContent =
+                totalStockOut;
+
+        }
+
+        // ==========================================
+        // FILTER MOVEMENTS
+        // ==========================================
+
+        function filterMovements() {
+
+            currentMovementPage = 1;
+
+            displayMovements(getFilteredMovements());
+
+        }
+
+        function getFilteredMovements() {
+
+            const search =
+                document.getElementById(
+                    "searchInput"
+                ).value
+                .toLowerCase()
+                .trim();
+
+            const movementType =
+                document.getElementById(
+                    "movementFilter"
+                ).value;
+
+            let filtered =
+                movementData.filter(
+                    movement => {
+
+                        const productName =
+                            (
+                                movement.product_name ||
+                                ""
+                            ).toLowerCase();
+
+                        const matchesSearch =
+                            productName.includes(
+                                search
+                            );
+
+                        const matchesType =
+                            movementType === "all" ||
+                            movement.movement_type ===
+                            movementType;
+
+                        return (
+                            matchesSearch &&
+                            matchesType
+                        );
+
+                    }
+                );
+
+            return filtered;
+
+        }
+
+        // ==========================================
+        // ESCAPE HTML
+        // ==========================================
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+        // ==========================================
+        // START
+        // ==========================================
+
+        loadMovements();
+        setInterval(loadMovements, 5000);
+
+    </script>
+
+</body>
+
+</html>

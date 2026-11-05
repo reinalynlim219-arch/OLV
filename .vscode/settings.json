@@ -1,0 +1,21 @@
+{
+    "claudeCodeChat.permissions.yoloMode": true,
+    "cSpell.words": [
+        "AUTOINCREMENT",
+        "barangay",
+        "bcrypt",
+        "customer_id",
+        "delivery_id",
+        "Legazpi",
+        "notnull",
+        "order_id",
+        "order_items",
+        "SQLite",
+        "OTP",
+        "OTPs",
+        "pickup_by",
+        "subtotal",
+        "user_id"
+    ],
+    "python.terminal.useEnvFile": true
+}

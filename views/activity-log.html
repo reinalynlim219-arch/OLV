@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>Activity Log - OLV Water Refilling Station</title>
+<link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/topbar.css">
+<script src="/js/topbar.js" defer></script>
+<script src="/js/sidebar.js" defer></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<body class="olv-page">
+<nav class="olv-topbar" aria-label="Main">
+    <span class="olv-topbar-brand">OLV Tracking and Inventory Management System</span>
+    <div class="olv-topbar-actions">
+        <a href="/dashboard" class="olv-topbar-btn olv-topbar-back" data-back>← Back to Dashboard</a>
+        <span class="olv-topbar-user" data-current-user></span>
+        <button type="button" class="olv-topbar-btn olv-topbar-logout" data-logout>Logout</button>
+    </div>
+</nav>
+<main class="container py-4">
+    <div class="mb-4">
+        <h1 class="page-title">Activity Log</h1>
+        <p class="text-muted mb-0">Who did what in the system, and when: sign-ins, orders, deliveries, stock changes, accounts, and settings. Newest first.</p>
+    </div>
+    <div class="tracking-card">
+        <div class="card-header-custom activity-filters">
+            <label class="visually-hidden" for="activitySearch">Search</label>
+            <input id="activitySearch" type="search" class="form-control" placeholder="Search name, action, or record (e.g. order #12)" maxlength="60">
+            <label class="visually-hidden" for="activityRole">Who</label>
+            <select id="activityRole" class="form-select">
+                <option value="">Everyone</option><option value="admin">Admin</option><option value="staff">Staff</option><option value="driver">Drivers</option><option value="customer">Customers</option>
+            </select>
+            <label class="visually-hidden" for="activityPeriod">Period</label>
+            <select id="activityPeriod" class="form-select">
+                <option value="all">All dates</option><option value="today">Today</option><option value="week">Last 7 days</option><option value="month">This month</option>
+            </select>
+        </div>
+        <p id="activityCount" class="small text-muted px-3 pt-3 mb-0" role="status"></p>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>When</th><th>Who</th><th>Role</th><th>What they did</th><th>Record</th></tr></thead>
+                <tbody id="activityRows"><tr><td colspan="5" class="text-center text-muted py-4">Loading...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-between align-items-center p-3 gap-2 flex-wrap">
+            <button type="button" id="activityPrev" class="btn btn-sm btn-outline-secondary">‹ Newer</button>
+            <span id="activityPage" class="small text-muted"></span>
+            <button type="button" id="activityNext" class="btn btn-sm btn-outline-secondary">Older ›</button>
+        </div>
+    </div>
+</main>
+<script src="/js/activity-log.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+node_modules/
+.tmp/
+.env
+.env.*
+!.env.example
+# The real database holds customers' names, numbers and addresses: never upload it.
+database/*.db
+database/*.db-shm
+database/*.db-wal
+# Large or personal folders that the website does not need.
+oracleJdk-26/
+video_frames/
+.claude/
+certs/
+tools/
+logs/
+*.mp3
+database/backups/

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/images/icon-192.png">
+<script src="/js/pwa.js" defer></script>
+<title>My OLV Account</title>
+<link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/barangays.js"></script>
+<link rel="stylesheet" href="/css/theme.css">
+<script src="/js/theme.js"></script>
+<script src="/js/table-cards.js" defer></script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary shadow-sm">
+    <div class="container">
+        <span class="navbar-brand fw-semibold">OLV Water Refilling Station</span>
+        <button id="logoutButton" class="btn btn-light btn-sm">Sign out</button>
+    </div>
+</nav>
+<main class="container py-4 py-md-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2 mb-4">
+        <div>
+            <p class="text-primary fw-semibold mb-1">MY ACCOUNT</p>
+            <h1 class="h2 mb-1">Welcome, <span id="customerName">Customer</span></h1>
+            <p class="text-muted mb-0">Place an order and follow its status in one place.</p>
+        </div>
+    </div>
+
+    <div id="portalMessage" class="alert d-none" role="alert"></div>
+
+    <div class="row g-4">
+        <section class="col-lg-7" id="placeOrder">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h4 mb-0">Place an order</h2>
+                        <span id="serviceFee" class="text-muted small">Free delivery</span>
+                    </div>
+                    <form id="orderForm" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Select Product</label>
+                            <div id="productChoices" class="product-choice-grid"></div>
+                            <div class="form-text">Select a product. Click it again to deselect, or choose another product to switch.</div>
+                            <input type="hidden" id="product" required>
+                        </div>
+                        <!-- Shown when the chosen product can come with a new gallon. -->
+                        <fieldset class="col-12" id="containerChoice" hidden>
+                            <legend class="form-label fs-6 mb-1">Do you have your own gallon?</legend>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="containerOption" id="optionRefill" value="refill" checked>
+                                <label class="form-check-label" for="optionRefill" id="optionRefillLabel">Refill — I have my own gallon</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="containerOption" id="optionNewGallon" value="new">
+                                <label class="form-check-label" for="optionNewGallon" id="optionNewGallonLabel">New gallon + water</label>
+                            </div>
+                            <div class="form-text">For deliveries, please hand your empty gallon to the driver when you choose Refill.</div>
+                        </fieldset>
+                        <div class="col-sm-5">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input id="quantity" type="number" min="1" max="100" value="1" class="form-control" required>
+                            <div id="stockMessage" class="form-text"></div>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="form-label">Order Total</label>
+                            <div id="orderTotal" class="fs-4 fw-semibold">₱0.00</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="fulfillmentMethod" class="form-label">How will you receive your order?</label>
+                            <select id="fulfillmentMethod" class="form-select" required>
+                                <option value="delivery">Deliver to my saved address</option>
+                                <option value="pickup">I will pick it up at the station</option>
+                            </select>
+                            <div class="form-text">Delivery is free. You can also pick it up at the station.</div>
+                        </div>
+                        <!-- Preferred delivery day (today up to 30 days ahead). -->
+                        <div class="col-12" id="preferredDateField">
+                            <span class="form-label d-block" id="preferredDateLabel">Preferred delivery date</span>
+                            <div id="preferredCalendar" class="mini-cal" role="group" aria-labelledby="preferredDateLabel"></div>
+                            <div id="preferredDateText" class="form-text" role="status"></div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100" type="submit">Submit order request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-lg-5" id="deliveryDetails">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Delivery details</h2>
+                    <form id="profileForm" class="row g-3">
+                        <div class="col-12"><label for="fullName" class="form-label">Full name</label><input id="fullName" class="form-control" required maxlength="80" autocomplete="name"></div>
+                        <div class="col-6"><label for="city" class="form-label">City / Municipality</label><select id="city" class="form-select"><option value="Legazpi City">Legazpi City</option><option value="Daraga">Daraga</option></select></div>
+                        <div class="col-6"><label for="barangay" class="form-label">Barangay</label><select id="barangay" class="form-select" required aria-describedby="barangayNotice"></select></div>
+                        <div id="barangayNotice" class="col-12 small text-warning-emphasis" role="status" hidden></div>
+                        <div class="col-4"><label for="zone" class="form-label">Zone</label><input id="zone" class="form-control"></div>
+                        <div class="col-8"><label for="street" class="form-label">Street</label><input id="street" class="form-control" required></div>
+                        <div class="col-6"><label for="houseNumber" class="form-label">House / Lot No.</label><input id="houseNumber" class="form-control" required></div>
+                        <div class="col-6"><label for="landmark" class="form-label">Landmark</label><input id="landmark" class="form-control"></div>
+                        <div class="col-12"><button class="btn btn-outline-primary w-100" type="submit">Save delivery details</button></div>
+                        <div class="col-12">
+                            <button type="button" id="saveLocationButton" class="btn btn-outline-secondary w-100">Save my current delivery location</button>
+                            <div id="locationStatus" class="form-text" role="status">Location is used to validate driver delivery confirmation.</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-12" id="myOrders">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">My orders</h2>
+                    <p id="gallonStatus" class="small text-muted" hidden></p>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead><tr><th>Date requested</th><th>Total</th><th>Status</th><th>Fulfillment / Delivery</th><th>Order items</th><th>Action</th></tr></thead>
+                            <tbody id="orders"><tr><td colspan="6" class="text-center text-muted py-4">Loading your orders...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+<!-- Order confirmation: pops up when the driver has dropped off an order. -->
+<dialog id="arrivedDialog" aria-labelledby="arrivedTitle" style="width:min(460px,calc(100% - 32px));border:1px solid #cbd9e8;border-radius:16px;padding:24px">
+    <h2 id="arrivedTitle" class="h4">Order confirmation</h2>
+    <p id="arrivedText" class="mb-2"></p>
+    <p class="small text-muted">Confirm that you received it to complete your order and get your e-receipt.</p>
+    <div class="d-flex justify-content-end gap-2">
+        <button id="arrivedLater" type="button" class="btn btn-outline-secondary">Not yet</button>
+        <button id="arrivedConfirm" type="button" class="btn btn-success">Order Received</button>
+    </div>
+</dialog>
+<dialog id="receiptDialog" aria-labelledby="receiptTitle" style="width:min(520px,calc(100% - 32px));max-height:90vh;overflow:auto;border:1px solid #cbd9e8;border-radius:16px;padding:24px">
+    <form id="receiptForm">
+        <h2 id="receiptTitle" class="h4">Confirm order received</h2>
+        <p>Attach a photo of your received order if you wish. A photo is optional.</p>
+        <label for="receiptPhoto" class="form-label">Receipt photo</label>
+        <input id="receiptPhoto" type="file" class="form-control" accept="image/jpeg,image/png,image/webp" aria-describedby="receiptHelp">
+        <button id="receiptCameraButton" type="button" class="btn btn-outline-primary mt-2">Take a photo</button>
+        <input id="receiptCamera" type="file" accept="image/*" capture="environment" hidden>
+        <p id="receiptHelp" class="form-text">Take a photo with your phone or choose an existing image. JPEG, PNG, or WebP, up to 10 MB.</p>
+        <img id="receiptPreview" alt="Receipt photo preview" class="d-none mb-3" style="max-width:100%;max-height:240px">
+        <p id="receiptMessage" role="status"></p>
+        <div id="receiptNoPhotoPrompt" class="alert alert-warning d-none" role="group" aria-labelledby="receiptNoPhotoQuestion">
+            <p id="receiptNoPhotoQuestion">Are you sure you want to confirm receipt without a photo?</p>
+            <div class="d-flex gap-2">
+                <button id="receiptNoPhotoYes" type="button" class="btn btn-success">Yes</button>
+                <button id="receiptNoPhotoNo" type="button" class="btn btn-outline-secondary">No</button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+            <button id="receiptCancel" type="button" class="btn btn-outline-secondary">Cancel</button>
+            <button id="receiptSubmit" type="submit" class="btn btn-success">Confirm received</button>
+        </div>
+    </form>
+</dialog>
+<script src="/js/delivery-tracking.js"></script>
+<script src="/js/customer-portal.js"></script>
+<script src="/js/customer-receipt.js"></script>
+</body>
+</html>
